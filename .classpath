@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_212"/>
+	<classpathentry kind="lib" path="/BaiRPG/libs/spigot-1.13.2.jar"/>
+	<classpathentry kind="lib" path="/BaiTeam-old/libs/[副本]DungeonsXL-0.17.7.jar"/>
+	<classpathentry kind="lib" path="/BaiTeam-old/libs/patched_1.12.2.jar"/>
+	<classpathentry kind="lib" path="/BaiTeam-old/libs/PlaceholderAPI-2.10.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
