@@ -97,6 +97,9 @@ public class BaiTeamCommand implements TabCompleter, CommandExecutor {
 						if (args.length >= 4 && Integer.valueOf(args[3]) != null) {
 							int1 = Integer.valueOf(args[3]);
 						}
+						if (TeamManager.getTeams().isEmpty()) {
+							TeamGui.getGui().openMainGui(player);
+						}
 						TeamGui.getGui().openTeamListGui(player, int1);
 						return true;
 					}
