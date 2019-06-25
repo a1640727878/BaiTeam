@@ -213,7 +213,7 @@ public class TeamGui {
 		TextComponent a1 = new TextComponent("[邀请]\n");
 		a1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("点击邀请 " + playerName + " 加入队伍").create()));
 		a1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/baiteam 邀请玩家 " + playerName));
-		return customTextName(playerName, 38, a1);
+		return customTextName(playerName, 34, a1);
 	}
 
 	private TextComponent getMemberText(String playerName) {
