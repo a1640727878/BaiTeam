@@ -243,7 +243,7 @@ public class TeamGui {
 		a1.addExtra("\n         ");
 		TextComponent a3 = new TextComponent("[申请加入]\n");
 		a3.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("点击申请加入队伍").create()));
-		a3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/baiteam 申请加入 " + team.getTeamName()));
+		a3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/baiteam 申请入队 " + team.getTeamName()));
 		a1.addExtra(a3);
 		return customTextName("      " + team.getTeamName() + " ", 0, a1);
 	}
