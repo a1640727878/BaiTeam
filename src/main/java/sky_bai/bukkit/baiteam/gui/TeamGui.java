@@ -170,11 +170,13 @@ public class TeamGui {
 	}
 
 	private TextComponent customTextName(String str, int length, TextComponent text) {
+		str = str + "§l";
 		if (str.length() < length) {
 			for (int i = 0; i < length - str.length(); i++) {
-				str = str + "　";
+				str = str + " ";
 			}
 		}
+		str = str + "§r";
 		TextComponent a1 = new TextComponent(str);
 		a1.addExtra(text);
 		return a1;
