@@ -7,8 +7,9 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import de.erethon.dungeonsxl.DungeonsXL;
@@ -25,7 +26,7 @@ import sky_bai.bukkit.baiteam.gui.TeamGui;
 import sky_bai.bukkit.baiteam.team.Team;
 import sky_bai.bukkit.baiteam.team.TeamManager;
 
-public class BaiTeamCommand implements TabExecutor {
+public class BaiTeamCommand implements TabCompleter, CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -212,17 +213,6 @@ public class BaiTeamCommand implements TabExecutor {
 				TeamManager.acceptTeamInvite(player, team, false);
 				return true;
 			}
-			/*case "快速加入": {
-				Set<Team> teams = TeamManager.getTeams();
-				for (Team team : teams) {
-					if (team.getMembers().size() > BaiTeam.getConfig(ConfigType.Config).getInt("TeamSize", 5)) {
-						TeamManager.joinTeam(player, team);
-						return true;
-					}
-				}
-				TeamGui.getGui().openMainGui(player);
-				return false;
-			}*/
 			case "集结传送": {
 				if (TeamManager.getTeam(player, false) == null || TeamManager.getTeam(player, false).getLeader() == player || TeamManager.getTeam(player, false).getLeader().getWorld() != player.getWorld() || BaiTeam.getConfig(ConfigType.Config).getStringList("ButtonWorld").contains(player.getWorld().getName()) == false) {
 					return false;
@@ -257,7 +247,7 @@ public class BaiTeamCommand implements TabExecutor {
 						return strs;
 					}
 					if (str2.equalsIgnoreCase("gui")) {
-						return Arrays.asList("all","Main","TeamInfo","TeamList","PlayerList");
+						return Arrays.asList("all", "Main", "TeamInfo", "TeamList", "PlayerList");
 					}
 				}
 				return Arrays.asList("play", "gui");

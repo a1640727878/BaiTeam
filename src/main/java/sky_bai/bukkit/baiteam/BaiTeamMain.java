@@ -1,14 +1,14 @@
 package sky_bai.bukkit.baiteam;
 
 import java.util.Map;
-import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import sky_bai.bukkit.baiteam.bookgui.BookGui;
+import sky_bai.bukkit.baiteam.bookgui.nms.BookGuiOpenBook_v1_11_R1;
 import sky_bai.bukkit.baiteam.bookgui.nms.BookGuiOpenBook_v1_12_R1;
+import sky_bai.bukkit.baiteam.bookgui.nms.BookGuiOpenBook_v1_13_R1;
 import sky_bai.bukkit.baiteam.bookgui.nms.BookGuiOpenBook_v1_13_R2;
 import sky_bai.bukkit.baiteam.command.BaiTeamCommand;
 import sky_bai.bukkit.baiteam.config.ConfigType;
@@ -57,8 +57,14 @@ public class BaiTeamMain extends JavaPlugin {
 
 	private Boolean setBookGuiOpenBook() {
 		switch (getMCVersion()) {
+		case "v1_11_R1":
+			BookGui.setBookGuiOpenBookNMS(new BookGuiOpenBook_v1_11_R1());
+			return true;
 		case "v1_12_R1":
 			BookGui.setBookGuiOpenBookNMS(new BookGuiOpenBook_v1_12_R1());
+			return true;
+		case "v1_13_R1":
+			BookGui.setBookGuiOpenBookNMS(new BookGuiOpenBook_v1_13_R1());
 			return true;
 		case "v1_13_R2":
 			BookGui.setBookGuiOpenBookNMS(new BookGuiOpenBook_v1_13_R2());
@@ -66,11 +72,6 @@ public class BaiTeamMain extends JavaPlugin {
 		default:
 			return false;
 		}
-	}
-
-	@Override
-	public Logger getLogger() {
-		return Logger.getLogger("BaiTeam");
 	}
 
 }

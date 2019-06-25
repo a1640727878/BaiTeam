@@ -27,18 +27,11 @@ public class TeamGui {
 		a1.addExtra("§m=============================\n");
 		a1.addExtra("\n\n\n\n");
 		a1.addExtra("         ");
-		/*TextComponent b1 = new TextComponent("[快速加入]");
-		b1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/baiteam 快速加入"));
-		b1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("快速加入队伍").create()));
-		a1.addExtra(b1);*/
-		a1.addExtra("\n");
-		a1.addExtra("         ");
 		TextComponent b2 = new TextComponent("[创建队伍]");
 		b2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/baiteam 创建队伍"));
 		b2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("创建属于你的队伍").create()));
 		a1.addExtra(b2);
-		a1.addExtra("\n");
-		a1.addExtra("\n");
+		a1.addExtra("\n\n");
 		a1.addExtra("         ");
 		TextComponent b3 = new TextComponent("[加入队伍]");
 		b3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/baiteam game gui TeamList"));

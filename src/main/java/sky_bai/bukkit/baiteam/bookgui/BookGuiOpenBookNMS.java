@@ -4,5 +4,5 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public interface BookGuiOpenBookNMS {
-	public void openBook(Player player,ItemStack itemStack);
+	public void openBook(Player player,ItemStack bookStack);
 }
