@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
@@ -15,6 +16,19 @@ import sky_bai.bukkit.baiteam.gui.TeamGui;
 import sky_bai.bukkit.baiteam.team.TeamManager;
 
 public class BaiListener implements Listener {
+
+	@EventHandler
+	public void PlayerCommand(PlayerCommandPreprocessEvent event) {
+		Player player = event.getPlayer();
+		if (event.getMessage().contains("/dxl play")) {
+			if (player.isOp()) {
+				return;
+			}
+			event.setCancelled(true);
+			Bukkit.dispatchCommand(player, "/baiteam game play"+event.getMessage().replace("/dxl play", ""));
+			return;
+		}
+	}
 
 	@EventHandler
 	public void PlayerSwapHand(PlayerSwapHandItemsEvent event) {

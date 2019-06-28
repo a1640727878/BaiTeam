@@ -4,10 +4,10 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_212"/>
 	<classpathentry kind="lib" path="/Libs/spigot-1.12.2.jar"/>
-	<classpathentry kind="lib" path="/Libs/spigot-1.13.2.jar"/>
-	<classpathentry kind="lib" path="/Libs/spigot-1.13.jar"/>
 	<classpathentry kind="lib" path="/Libs/BaiTeam/PlaceholderAPI-2.10.2.jar"/>
 	<classpathentry kind="lib" path="/Libs/BaiTeam/[副本]DungeonsXL-0.17.7.jar"/>
 	<classpathentry kind="lib" path="/Libs/spigot-1.11.jar"/>
+	<classpathentry kind="lib" path="/Libs/spigot-1.13.2.jar"/>
+	<classpathentry kind="lib" path="/Libs/spigot-1.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
