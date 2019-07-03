@@ -51,7 +51,7 @@ public class TeamGui {
 		a1.addExtra("队长名称: " + team.getLeader().getName() + "\n\n");
 		List<Player> b1 = new ArrayList<Player>();
 		b1.addAll(team.getMembers());
-		TextComponent c1 = new TextComponent("" + b1.size() + "/5");
+		TextComponent c1 = new TextComponent("" + b1.size() + "/" + BaiTeam.getConfig(ConfigType.Config).getInt("TeamSize",5));
 		TextComponent d1 = new TextComponent();
 		for (Player player2 : b1) {
 			d1.addExtra(player2.getName() + "\n");

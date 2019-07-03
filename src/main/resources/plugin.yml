@@ -1,7 +1,7 @@
 name: BaiTeam
 main: sky_bai.bukkit.baiteam.BaiTeamMain
 api-version: 1.13
-version: 0.0.4
+version: 0.0.5
 author: sky_bai
 prefix: BaiTeam
 depend: ["DungeonsXL","PlaceholderAPI"]
