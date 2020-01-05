@@ -9,10 +9,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import sky_bai.bukkit.baiteam.BaiTeam;
-import sky_bai.bukkit.baiteam.BaiTeamMain;
 
-public class MessageConfig {
-	private File configFile = new File(BaiTeam.getBaiTeam().getDataFolder(), "config.yml");
+public class MessageConfig implements BTConfig.Config {
+	private File configFile = new File(BaiTeam.getBaiTeam().getDataFolder(), "message.yml");
 	private FileConfiguration messageConfig = new YamlConfiguration();
 
 	public MessageConfig() {
@@ -26,20 +25,12 @@ public class MessageConfig {
 		}
 	}
 
-	public static String BTMessage(String key, String... string ) {
-		String mesString = key;
-		for (int i = 0; i < string.length; i++) {
-			mesString = mesString.replaceAll("\\&\\{"+i+"\\}", string[i]);
-		}
-		return mesString;
-	}
-	
 	public FileConfiguration getConfig() {
 		return messageConfig;
 	}
 
 	private void reset() throws IOException {
-		InputStream a1 = BaiTeamMain.class.getResourceAsStream("/assets/message.yml");
+		InputStream a1 = BaiTeam.class.getResourceAsStream("/assets/message.yml");
 		FileUtils.copyInputStreamToFile(a1, configFile);
 	}
 }

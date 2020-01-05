@@ -1,10 +1,15 @@
 name: BaiTeam
-main: sky_bai.bukkit.baiteam.BaiTeamMain
+main: sky_bai.bukkit.baiteam.BaiTeam
 api-version: 1.13
-version: 0.0.5
-author: sky_bai
+version: '@version@'
 prefix: BaiTeam
-depend: ["DungeonsXL","PlaceholderAPI"]
+authors: 
+- sky_bai
+depend: 
+- DungeonsXL
+#- ProtocolLib
+softdepend: 
+- PlaceholderAPI
 
 commands: 
   BaiTeam: 

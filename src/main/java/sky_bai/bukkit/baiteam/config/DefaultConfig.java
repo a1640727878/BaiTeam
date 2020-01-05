@@ -9,19 +9,19 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import sky_bai.bukkit.baiteam.BaiTeam;
-import sky_bai.bukkit.baiteam.BaiTeamMain;
 
-public class DefaultConfig {
+public class DefaultConfig implements BTConfig.Config {
+
 	private File configFile = new File(BaiTeam.getBaiTeam().getDataFolder(), "config.yml");
 	private FileConfiguration defaultConfig = new YamlConfiguration();
-	
-	public DefaultConfig(){
+
+	public DefaultConfig() {
 		try {
 			if (configFile.exists() == false) {
 				reset();
 			}
 			defaultConfig.load(configFile);
-		}catch (Exception e) {
+		} catch (Exception e) {
 
 		}
 	}
@@ -29,10 +29,10 @@ public class DefaultConfig {
 	public FileConfiguration getConfig() {
 		return defaultConfig;
 	}
-	
+
 	private void reset() throws IOException {
-		InputStream a1 = BaiTeamMain.class.getResourceAsStream("/assets/config.yml");
+		InputStream a1 = BaiTeam.class.getResourceAsStream("/assets/config.yml");
 		FileUtils.copyInputStreamToFile(a1, configFile);
 	}
-	
+
 }
