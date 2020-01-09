@@ -20,8 +20,8 @@ repositories {
 
 dependencies {
 	compile files('libs/Spigot-1.12.2.jar')
-	compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.0'
 	compileOnly 'me.clip:placeholderapi:2.10.3'
+	compile files('libs/ProtocolLib-4.5.0.jar')
 	compile files('libs/DungeonsXL-0.17.7.jar')
 }
 
