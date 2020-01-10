@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -25,12 +24,13 @@ public class MessageConfig implements BTConfig.Config {
 		}
 	}
 
+	@Override
 	public FileConfiguration getConfig() {
 		return messageConfig;
 	}
 
 	private void reset() throws IOException {
 		InputStream a1 = BaiTeam.class.getResourceAsStream("/assets/message.yml");
-		FileUtils.copyInputStreamToFile(a1, configFile);
+		BaiTeam.getBaiTeam().copyInputStreamToFile(a1, configFile);
 	}
 }

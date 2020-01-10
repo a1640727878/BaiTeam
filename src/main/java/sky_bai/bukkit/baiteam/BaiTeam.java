@@ -1,8 +1,10 @@
 package sky_bai.bukkit.baiteam;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,21 +16,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.utility.MinecraftVersion;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
-import net.minecraft.server.v1_12_R1.PacketDataSerializer;
-import net.minecraft.server.v1_12_R1.EntityArrow.PickupStatus;
 import sky_bai.bukkit.baiteam.config.BTConfig;
 import sky_bai.bukkit.baiteam.config.DefaultConfig;
 import sky_bai.bukkit.baiteam.config.MessageConfig;
@@ -75,40 +70,6 @@ public final class BaiTeam extends JavaPlugin {
 				}
 			}
 		}.runTaskTimerAsynchronously(this, 10, 10);
-
-		protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.CUSTOM_PAYLOAD) {
-			@Override
-			public void onPacketSending(PacketEvent event) {
-				System.out.println(event);
-				System.out.println(event.getPacket());
-				System.out.println(event.getPacket().getSpecificModifier(Object.class));
-				System.out.println(event.getPacket().getSpecificModifier(Object.class).getValues());
-				System.out.println(event.getPacket().getStrings());
-				System.out.println(event.getPacket().getStrings().getValues());
-				System.out.println(event.getPacket().getModifier().withType(ByteBuf.class));
-				System.out.println(event.getPacket().getModifier().withType(ByteBuf.class).getValues());
-				System.out.println(ByteBufUtil.hexDump((ByteBuf) event.getPacket().getModifier().withType(ByteBuf.class).getValues().get(0)));
-			}
-		});
-	}
-
-	public Object toObject(byte[] bytes) {
-		Object obj = null;
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-			ObjectInputStream ois = new ObjectInputStream(bis);
-			obj = ois.readObject();
-			ois.close();
-			bis.close();
-		} catch (IOException | ClassNotFoundException ex) {
-			ex.printStackTrace();
-		}
-		return obj;
-	}
-
-	@Override
-	public void onDisable() {
-
 	}
 
 	public static BaiTeam getBaiTeam() {
@@ -157,7 +118,7 @@ public final class BaiTeam extends JavaPlugin {
 		if (version.compareTo(new MinecraftVersion("1.9")) >= 0 && version.compareTo(new MinecraftVersion("1.12.2")) == 0) {
 			openBookPacketContainer_V1_9(player);
 			return;
-		} else if (version.compareTo(new MinecraftVersion("1.13")) >= 0 && version.compareTo(new MinecraftVersion("1.13.2")) == 0 ) {
+		} else if (version.compareTo(new MinecraftVersion("1.13")) >= 0 && version.compareTo(new MinecraftVersion("1.13.2")) == 0) {
 			openBookPacketContainer_V1_13(player);
 			return;
 		} else if (version.compareTo(new MinecraftVersion("1.14")) >= 0) {
@@ -174,5 +135,22 @@ public final class BaiTeam extends JavaPlugin {
 		player.getInventory().setItem(slot, book);
 		openBookMinecraftVersion(player);
 		player.getInventory().setItem(slot, old);
+	}
+
+	public void copyInputStreamToFile(InputStream is, File file) {
+		file.getParentFile().mkdirs();
+		OutputStream os = null;
+		try {
+			file.createNewFile();
+			os = new FileOutputStream(file);
+			int bytesRead = 0;
+			byte[] buffer = new byte[8192];
+			while ((bytesRead = is.read(buffer, 0, 8192)) != -1) {
+				os.write(buffer, 0, bytesRead);
+			}
+			is.close();
+			os.close();
+		} catch (IOException e) {
+		}
 	}
 }
