@@ -1,6 +1,6 @@
 package sky_bai.bukkit.baiteam.event;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +27,8 @@ public class BTJoinTeamEvent extends BaiTeamEvent {
 	}
 
 	private void run() {
-		List<String> list = Arrays.asList(getTeam().getTeamName());
+		List<String> list = new ArrayList<String>();
+		list.add(getTeam().getTeamName());
 		if (BTConfig.getConfig().getConfig().getInt("TeamSize", 5) <= getTeam().getMembers().size()) {
 			BaiMessage.send(getPlayer(), BaiMessage.Error.OnTeamIsFull, list);
 			return;

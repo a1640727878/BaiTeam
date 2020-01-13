@@ -52,7 +52,7 @@ public class TeamGui {
 			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_InvitePlayer.getMes(), "/baiteam OpenGui PlayerList", BaiMessage.TeamGui.Text_TeamInfo_InvitePlayer.getMes()).getText());
 			mes.addExtra("\n");
 			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_Promotional.getMes()));
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_Promotional.getMes(), "/baiteam GuiPromotional", BaiMessage.TeamGui.Text_TeamInfo_Promotional.getMes()).getText());
+			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_Promotional.getMes(), "/baiteam GuiPromotional " + team.getTeamName(), BaiMessage.TeamGui.Text_TeamInfo_Promotional.getMes()).getText());
 			mes.addExtra("\n");
 			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam.getMes()));
 			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam.getMes(), "/baiteam Leave", BaiMessage.TeamGui.Text_TeamInfo_LeaveTeam.getMes()).getText());
@@ -115,9 +115,6 @@ public class TeamGui {
 		List<Player> p1 = players;
 		int i1 = p1.size() % 12 > 0 ? p1.size() / 12 + 1 : p1.size() / 12;
 		page = page > i1 ? i1 : page;
-		/*
-		 * for (Player player2 : p1) { mes.addExtra(getPlayerText(player2.getName())); }
-		 */
 		for (int i = 0; i < 12; i++) {
 			if (p1.size() <= (12 * page + i)) {
 				break;
@@ -135,7 +132,7 @@ public class TeamGui {
 		} else {
 			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_Previous.getMes(), "/baiteam OpenGui PlayerList " + (page - 1), null).getText());
 		}
-		String str1 = BaiTools.setStringCentered("[00]", 29.0 - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Previous_No.getMes())/* - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Next_No.getMes())*/);
+		String str1 = BaiTools.setStringCentered("[00]", 29.0 - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Previous_No.getMes())/* - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Next_No.getMes()) */);
 		String str2 = page + "";
 		if (page <= 9) {
 			str2 = "0" + page;

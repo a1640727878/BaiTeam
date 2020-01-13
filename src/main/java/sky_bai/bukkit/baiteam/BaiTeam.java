@@ -53,9 +53,8 @@ public final class BaiTeam extends JavaPlugin {
 			getLogger().info("注册完成!!");
 		}
 
-		BaiCommand command = new BaiCommand();
-		getCommand("BaiTeam").setExecutor(command);
-		getCommand("BaiTeam").setTabCompleter(command);
+		getCommand("BaiTeam").setExecutor(new BaiCommand());
+		getCommand("BaiTeamCmd").setExecutor(new BaiCommandCMD());
 
 		new BukkitRunnable() {
 			@Override
