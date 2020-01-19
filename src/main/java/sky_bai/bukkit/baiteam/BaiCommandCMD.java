@@ -28,7 +28,7 @@ public class BaiCommandCMD implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length > 1) {
-			Player player = (Bukkit.getPlayer(args[0]) != null) ? Bukkit.getPlayer(args[1]) : null;
+			Player player = (Bukkit.getPlayer(args[0]) != null) ? Bukkit.getPlayer(args[0]) : null;
 			switch (args[1].toLowerCase()) {
 			case "play":
 				return play(player, args);

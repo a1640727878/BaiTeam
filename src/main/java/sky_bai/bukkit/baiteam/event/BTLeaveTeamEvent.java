@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import sky_bai.bukkit.baiteam.BaiMessage;
+import sky_bai.bukkit.baiteam.BaiTeam;
 import sky_bai.bukkit.baiteam.team.Team;
 
 public class BTLeaveTeamEvent extends BaiTeamEvent {
@@ -36,6 +37,9 @@ public class BTLeaveTeamEvent extends BaiTeamEvent {
 		Set<Player> players = getTeam().getMembers();
 		for (Player player : players) {
 			BaiMessage.send(player, BaiMessage.TeamMesEnum.Leave_OnMember_Members, list);
+		}
+		if (getTeam().getLeader() == getPlayer()) {
+			BaiTeam.getTeamManager().delTeam(getTeam());
 		}
 	}
 

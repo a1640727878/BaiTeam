@@ -66,7 +66,7 @@ public class TeamGui {
 			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_Promotional_Member.getMes(), null, BaiMessage.TeamGui.Text_TeamInfo_Promotional_Member.getMes()).getText());
 			mes.addExtra("\n");
 			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes()));
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes(), null, BaiMessage.TeamGui.Text_TeamInfo_LeaveTeam_Member.getMes()).getText());
+			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes(), "/baiteam Leave", BaiMessage.TeamGui.Text_TeamInfo_LeaveTeam_Member.getMes()).getText());
 			bookGui.addPage(mes);
 		}
 		bookGui.openBook(player);
