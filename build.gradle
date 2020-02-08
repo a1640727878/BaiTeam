@@ -11,18 +11,10 @@ targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
-    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
-    maven { url = 'https://oss.sonatype.org/content/groups/public/' }
-	maven { url = 'http://repo.dmulloy2.net/nexus/repository/public/' }
-	maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
-	maven { url = 'https://repo1.maven.org/maven2/' }
 }
 
 dependencies {
-	compile files('libs/Spigot-1.12.2.jar')
-	compileOnly 'me.clip:placeholderapi:2.10.3'
-	compile files('libs/ProtocolLib-4.5.0.jar')
-	compile files('libs/DungeonsXL-0.18-SNAPSHOT-771.jar')
+	compile fileTree(dir: 'libs', includes: ['*.jar'])
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

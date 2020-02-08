@@ -6,8 +6,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import sky_bai.bukkit.baiteam.BaiMessage;
 import sky_bai.bukkit.baiteam.BaiTeam;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 
 public class BTAcceptTeamInviteEvent extends BaiTeamEvent {
@@ -38,22 +38,22 @@ public class BTAcceptTeamInviteEvent extends BaiTeamEvent {
 	private void run() {
 		List<String> list = Arrays.asList(getTeam().getTeamName(), getTeam().getLeader().getName(), getPlayer().getName());
 		if (getTeam().getOnInvitePlayer().contains(getPlayer()) == false) {
-			BaiMessage.send(getPlayer(), BaiMessage.TeamMesEnum.Join_Invite_TeamNoInvite, list);
+			BTMessage.send(getPlayer(), BTMessage.Team.Join_Invite_TeamNoInvite, list);
 			return;
 		}
-		getTeam().delOnInvitePlayer(getPlayer());
+		getTeam().delInvitePlayer(getPlayer());
 		if (BaiTeam.getTeamManager().ifOnTeam(getPlayer()) == true) {
-			BaiMessage.send(getPlayer(), BaiMessage.Error.OnPlayerOnTeam, list);
+			BTMessage.send(getPlayer(), BTMessage.Error.OnPlayerOnTeam, list);
 			return;
 		}
 		if (getIsApply()) {
 			BTJoinTeamEvent.run(getTeam(), getPlayer());
-			BaiMessage.send(getPlayer(), BaiMessage.TeamMesEnum.Join_Invite_YesFoMember, list);
-			BaiMessage.send(getTeam().getLeader(), BaiMessage.TeamMesEnum.Join_Invite_Yes, list);
+			BTMessage.send(getPlayer(), BTMessage.Team.Join_Invite_YesFoMember, list);
+			BTMessage.send(getTeam().getLeader(), BTMessage.Team.Join_Invite_Yes, list);
 			return;
 		}
-		BaiMessage.send(getPlayer(), BaiMessage.TeamMesEnum.Join_Invite_NoFoMember, list);
-		BaiMessage.send(getTeam().getLeader(), BaiMessage.TeamMesEnum.Join_Invite_No, list);
+		BTMessage.send(getPlayer(), BTMessage.Team.Join_Invite_NoFoMember, list);
+		BTMessage.send(getTeam().getLeader(), BTMessage.Team.Join_Invite_No, list);
 	}
 
 }

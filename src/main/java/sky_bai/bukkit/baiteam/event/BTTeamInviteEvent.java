@@ -6,8 +6,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import sky_bai.bukkit.baiteam.BaiMessage;
 import sky_bai.bukkit.baiteam.BaiTeam;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 
 public class BTTeamInviteEvent extends BaiTeamEvent {
@@ -38,13 +38,13 @@ public class BTTeamInviteEvent extends BaiTeamEvent {
 	private void run() {
 		List<String> list = Arrays.asList(getTeam().getTeamName(), getLeader().getName(), getPlayer().getName());
 		if (BaiTeam.getTeamManager().ifOnTeam(getPlayer()) == true) {
-			BaiMessage.send(getPlayer(), BaiMessage.Error.OnPlayerInTeam, list);
+			BTMessage.send(getPlayer(), BTMessage.Error.OnPlayerInTeam, list);
 			return;
 		}
-		getTeam().addOnInvitePlayer(getPlayer());
-		BaiMessage.send(getLeader(), BaiMessage.TeamMesEnum.Join_Invite_InviteForLeader, list);
-		BaiMessage.Action action_1 = BaiMessage.Action.setAction(BaiMessage.Button.Yes.getMes(), "/baiteam Invite Yes " + getTeam().getTeamName(), BaiMessage.Button.Text_Invite_Yes.getMes());
-		BaiMessage.Action action_2 = BaiMessage.Action.setAction(BaiMessage.Button.NO.getMes(), "/baiteam Invite No " + getTeam().getTeamName(), BaiMessage.Button.Text_Invite_No.getMes());
-		BaiMessage.send(getPlayer(), BaiMessage.TeamMesEnum.Join_Invite_InviteForPlayer, list, action_1, action_2);
+		getTeam().addInvitePlayer(getPlayer());
+		BTMessage.send(getLeader(), BTMessage.Team.Join_Invite_InviteForLeader, list);
+		BTMessage.Action action_1 = BTMessage.Action.setAction(BTMessage.Button.Yes.getMes(), "/baiteam Invite Yes " + getTeam().getTeamName(), BTMessage.Button.Text_Invite_Yes.getMes());
+		BTMessage.Action action_2 = BTMessage.Action.setAction(BTMessage.Button.NO.getMes(), "/baiteam Invite No " + getTeam().getTeamName(), BTMessage.Button.Text_Invite_No.getMes());
+		BTMessage.send(getPlayer(), BTMessage.Team.Join_Invite_InviteForPlayer, list, action_1, action_2);
 	}
 }

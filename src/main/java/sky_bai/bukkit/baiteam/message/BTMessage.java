@@ -1,4 +1,4 @@
-package sky_bai.bukkit.baiteam;
+package sky_bai.bukkit.baiteam.message;
 
 import java.util.List;
 
@@ -13,10 +13,8 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import sky_bai.bukkit.baiteam.config.BTConfig;
 
-public class BaiMessage {
-
+public class BTMessage {
 	private static String mesPrefix = "[BaiTeam] ";
 
 	public static void send(Player player, BaiMes es, List<String> list) {
@@ -55,17 +53,18 @@ public class BaiMessage {
 		return str = getMesPrefix() + str;
 	}
 
-	public static void setMesPrefix(String mesPrefix) {
-		BaiMessage.mesPrefix = mesPrefix;
+	public static String getMesPrefix() {
+		String str = mesPrefix;
+		return str;
 	}
 
-	public static String getMesPrefix() {
-		return "" + mesPrefix;
+	public static void setMesPrefix(String str) {
+		mesPrefix = str;
 	}
 
 	interface BaiMes {
 		public String getKey();
-
+		public void setMes(String mes);
 		public String getMes();
 	}
 
@@ -114,7 +113,7 @@ public class BaiMessage {
 
 		Error(String key, String mes) {
 			this.key = key;
-			this.mes = BTConfig.getMessage().getConfig().getString(key, mes);
+			this.mes = mes;
 		}
 
 		@Override
@@ -126,9 +125,14 @@ public class BaiMessage {
 		public String getMes() {
 			return mes;
 		}
+
+		@Override
+		public void setMes(String mes) {
+			this.mes = mes;
+		}
 	}
 
-	public enum TeamMesEnum implements BaiMes {
+	public enum Team implements BaiMes {
 		Create("Team.Create", "你成功的创建了队伍 [&{0}]"),
 		Leave_OnLeader_Member("Team.Leave_OnLeader_Member", "&{1} 解散了队伍"),
 		Leave_OnLeader_Leader("Team.Leave_OnLeader_Leader", "你解散了队伍 [&{0}]"),
@@ -162,9 +166,9 @@ public class BaiMessage {
 		private String key = null;
 		private String mes = null;
 
-		TeamMesEnum(String key, String mes) {
+		Team(String key, String mes) {
 			this.key = key;
-			this.mes = BTConfig.getMessage().getConfig().getString(key, mes);
+			this.mes = mes;
 		}
 
 		@Override
@@ -175,6 +179,11 @@ public class BaiMessage {
 		@Override
 		public String getMes() {
 			return mes;
+		}
+
+		@Override
+		public void setMes(String mes) {
+			this.mes = mes;
 		}
 	}
 
@@ -196,7 +205,7 @@ public class BaiMessage {
 
 		Button(String key, String mes) {
 			this.key = key;
-			this.mes = BTConfig.getMessage().getConfig().getString(key, mes);
+			this.mes = mes;
 		}
 
 		public String getKey() {
@@ -205,6 +214,10 @@ public class BaiMessage {
 
 		public String getMes() {
 			return mes;
+		}
+		
+		public void setMes(String mes) {
+			this.mes = mes;
 		}
 	}
 
@@ -247,7 +260,7 @@ public class BaiMessage {
 
 		TeamGui(String key, String mes) {
 			this.key = key;
-			this.mes = BTConfig.getMessage().getConfig().getString(key, mes);
+			this.mes = mes;
 		}
 
 		public String getKey() {
@@ -256,6 +269,10 @@ public class BaiMessage {
 
 		public String getMes() {
 			return mes;
+		}
+		
+		public void setMes(String mes) {
+			this.mes = mes;
 		}
 	}
 }

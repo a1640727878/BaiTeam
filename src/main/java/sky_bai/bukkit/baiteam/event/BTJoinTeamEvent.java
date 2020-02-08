@@ -7,9 +7,9 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import sky_bai.bukkit.baiteam.BaiMessage;
 import sky_bai.bukkit.baiteam.BaiTeam;
 import sky_bai.bukkit.baiteam.config.BTConfig;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 
 public class BTJoinTeamEvent extends BaiTeamEvent {
@@ -30,11 +30,11 @@ public class BTJoinTeamEvent extends BaiTeamEvent {
 		List<String> list = new ArrayList<String>();
 		list.add(getTeam().getTeamName());
 		if (BTConfig.getConfig().getConfig().getInt("TeamSize", 5) <= getTeam().getMembers().size()) {
-			BaiMessage.send(getPlayer(), BaiMessage.Error.OnTeamIsFull, list);
+			BTMessage.send(getPlayer(), BTMessage.Error.OnTeamIsFull, list);
 			return;
 		}
 		if (BaiTeam.getTeamManager().ifOnTeam(getPlayer())) {
-			BaiMessage.send(getPlayer(), BaiMessage.Error.OnPlayerOnTeam, null);
+			BTMessage.send(getPlayer(), BTMessage.Error.OnPlayerOnTeam, null);
 			return;
 		}
 		Set<Player> players = getTeam().getMembers();
@@ -42,9 +42,9 @@ public class BTJoinTeamEvent extends BaiTeamEvent {
 		list.add(getTeam().getLeader().getName());
 		list.add(getPlayer().getName());
 		for (Player player : players) {
-			BaiMessage.send(player, BaiMessage.TeamMesEnum.Join_Members, list);
+			BTMessage.send(player, BTMessage.Team.Join_Members, list);
 		}
-		BaiMessage.send(getPlayer(), BaiMessage.TeamMesEnum.Join_Member, list);
+		BTMessage.send(getPlayer(), BTMessage.Team.Join_Member, list);
 	}
 
 }

@@ -6,8 +6,8 @@ import java.util.Set;
 
 import org.bukkit.entity.Player;
 
-import sky_bai.bukkit.baiteam.BaiMessage;
 import sky_bai.bukkit.baiteam.BaiTeam;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 
 public class BTDissolveTeamEvent extends BaiTeamEvent {
@@ -29,9 +29,9 @@ public class BTDissolveTeamEvent extends BaiTeamEvent {
 		players.remove(getPlayer());
 		List<String> list = Arrays.asList(getTeam().getTeamName(), getPlayer().getName());
 		BaiTeam.getTeamManager().delTeam(getTeam());
-		BaiMessage.send(getPlayer(), BaiMessage.TeamMesEnum.Leave_OnLeader_Leader, list);
+		BTMessage.send(getPlayer(), BTMessage.Team.Leave_OnLeader_Leader, list);
 		for (Player player : players) {
-			BaiMessage.send(player, BaiMessage.TeamMesEnum.Leave_OnLeader_Member, list);
+			BTMessage.send(player, BTMessage.Team.Leave_OnLeader_Member, list);
 		}
 	}
 

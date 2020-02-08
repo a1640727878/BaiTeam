@@ -1,89 +1,97 @@
 package sky_bai.bukkit.baiteam.team;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.entity.Player;
 
 public class Team {
 	// 队长
-	private Player leader = null;
+	private Player leader;
 	// 队员们
 	private Set<Player> members = new HashSet<Player>();
 	// 队伍名
-	private String teamName = null;
-	// 申请入队
+	private String teamName;
+	// 入队申请表
 	private Set<Player> onJoinPlayer = new HashSet<Player>();
-	// 邀请入队
+	// 邀请申请表
 	private Set<Player> onInvitePlayer = new HashSet<Player>();
-
-	public Team(Player leader, String teamName) {
-		setTeamName(teamName);
-		setLeader(leader);
-		addMembers(leader);
+	
+	public Team(Player player,String name) {
+		leader = player;
+		members.add(player);
+		teamName = name;
 	}
-
-	public void setLeader(Player leader) {
-		this.leader = leader;
+	
+	public void setLeader(Player player) {
+		leader = player;
 	}
-
+	
 	public Player getLeader() {
 		Player player = leader;
 		return player;
 	}
 
-	public Team addMembers(Player player) {
-		members.add(player);
-		return this;
+	public String getLeaderName() {
+		return leader.getName();
 	}
 	
-	public Team delMember(Player player) {
-		members.remove(player);
-		return this;
+	public void setTeamName(String name) {
+		teamName = name;
 	}
 
+	public String getTeamName() {
+		String name = teamName;
+		return name;
+	}
+	
 	public Set<Player> getMembers() {
 		Set<Player> players = members;
 		return players;
 	}
-
-	public Team addOnInvitePlayer(Player player) {
-		onInvitePlayer.add(player);
-		return this;
+	
+	public List<String> getMemberNames() {
+		List<String> names = new ArrayList<String>();
+		for (Player player : members) {
+			names.add(player.getName());
+		}
+		return names;
 	}
 	
-	public Team delOnInvitePlayer(Player player) {
-		onInvitePlayer.remove(player);
-		return this;
+	public void addMembers(Player player) {
+		members.add(player);
 	}
-
+	
+	public void delMember(Player player) {
+		members.remove(player);
+	}
+	
 	public Set<Player> getOnInvitePlayer() {
 		Set<Player> players = onInvitePlayer;
 		return players;
 	}
-
-	public Team addOnJoinPlayer(Player player) {
-		onJoinPlayer.add(player);
-		return this;
+	
+	public void addInvitePlayer(Player player) {
+		onInvitePlayer.add(player);
 	}
-
-	public Team delOnJoinPlayer(Player player) {
-		onJoinPlayer.remove(player);
-		return this;
+	
+	public void delInvitePlayer(Player player) {
+		onInvitePlayer.remove(player);
 	}
 	
 	public Set<Player> getOnJoinPlayer() {
 		Set<Player> players = onJoinPlayer;
 		return players;
 	}
-
-	public void setTeamName(String teamName) {
-		this.teamName = teamName;
+	
+	public void addJoinPlayer(Player player) {
+		onJoinPlayer.add(player);
 	}
-
-	public String getTeamName() {
-		String string = teamName;
-		return string;
+	
+	public void deJoinPlayer(Player player) {
+		onJoinPlayer.remove(player);
 	}
-
+	
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import sky_bai.bukkit.baiteam.BaiMessage;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 
 public class BTPromotionalTeamEvent extends BaiTeamEvent {
@@ -25,8 +25,8 @@ public class BTPromotionalTeamEvent extends BaiTeamEvent {
 
 	private void run() {
 		List<String> list = Arrays.asList(getTeam().getTeamName(),getTeam().getLeader().getName());
-		BaiMessage.Action action_1 = BaiMessage.Action.setAction(BaiMessage.Button.ApplyTo.getMes(), "/baiteam ApplyTo " + getTeam().getTeamName(), BaiMessage.Button.Text_ApplyTo.getMes());
-		BaiMessage.broadcast(BaiMessage.TeamMesEnum.Promotional, list, action_1);
+		BTMessage.Action action_1 = BTMessage.Action.setAction(BTMessage.Button.ApplyTo.getMes(), "/baiteam ApplyTo " + getTeam().getTeamName(), BTMessage.Button.Text_ApplyTo.getMes());
+		BTMessage.broadcast(BTMessage.Team.Promotional, list, action_1);
 	}
 
 }

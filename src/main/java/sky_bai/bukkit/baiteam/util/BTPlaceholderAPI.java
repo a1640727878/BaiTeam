@@ -1,11 +1,12 @@
-package sky_bai.bukkit.baiteam;
+package sky_bai.bukkit.baiteam.util;
 
 import org.bukkit.entity.Player;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import sky_bai.bukkit.baiteam.BaiTeam;
 import sky_bai.bukkit.baiteam.team.Team;
 
-public class BaiTeamPlaceholderAPI extends PlaceholderExpansion {
+public class BTPlaceholderAPI extends PlaceholderExpansion {
 
 	@Override
 	public String getAuthor() {
@@ -47,6 +48,9 @@ public class BaiTeamPlaceholderAPI extends PlaceholderExpansion {
 			case "Members": {
 				String str = team.getMembers().toString();
 				return str.substring(1, str.length() - 1);
+			}
+			case "Amount": {
+				return team.getMembers().size() + "";
 			}
 			}
 		} else {

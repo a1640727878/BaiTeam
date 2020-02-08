@@ -1,4 +1,4 @@
-package sky_bai.bukkit.baiteam.book;
+package sky_bai.bukkit.baiteam.gui;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,10 +8,10 @@ import java.util.Set;
 import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.chat.TextComponent;
-import sky_bai.bukkit.baiteam.BaiMessage;
-import sky_bai.bukkit.baiteam.BaiTools;
 import sky_bai.bukkit.baiteam.config.BTConfig;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
+import sky_bai.bukkit.baiteam.util.BaiTools;
 
 public class TeamGui {
 	private static TeamGui tGui = new TeamGui();
@@ -24,11 +24,11 @@ public class TeamGui {
 		BookGui bookGui = BookGui.getBookGui();
 		TextComponent mes = new TextComponent();
 		mes.addExtra("§m============================\n\n\n\n\n");
-		mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_CreateTeam.getMes()));
-		mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_CreateTeam.getMes(), "/baiteam Create", BaiMessage.TeamGui.Text_CreateTeam.getMes()).getText());
+		mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_CreateTeam.getMes()));
+		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_CreateTeam.getMes(), "/baiteam Create", BTMessage.TeamGui.Text_CreateTeam.getMes()).getText());
 		mes.addExtra("\n\n");
-		mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_JoinTeam.getMes()));
-		mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_JoinTeam.getMes(), "/baiteam OpenGui TeamList", BaiMessage.TeamGui.Text_JoinTeam.getMes()).getText());
+		mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_JoinTeam.getMes()));
+		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_JoinTeam.getMes(), "/baiteam OpenGui TeamList", BTMessage.TeamGui.Text_JoinTeam.getMes()).getText());
 		mes.addExtra("\n\n\n\n\n§m============================");
 		bookGui.addPage(mes);
 		bookGui.openBook(player);
@@ -37,36 +37,36 @@ public class TeamGui {
 	public void openTeamInfoGui(Player player, Team team) {
 		BookGui bookGui = BookGui.getBookGui();
 		TextComponent mes = new TextComponent();
-		String str1 = BaiMessage.TeamGui.Text_TeamInfo.getMes();
+		String str1 = BTMessage.TeamGui.Text_TeamInfo.getMes();
 		mes.addExtra(BaiTools.setStringCentered(str1) + str1 + "\n\n");
-		mes.addExtra(BaiMessage.TeamGui.Text_TeamInfo_1.getMes() + ": " + team.getTeamName() + "\n\n");
-		mes.addExtra(BaiMessage.TeamGui.Text_TeamInfo_1.getMes() + ": " + team.getLeader().getName() + "\n\n");
-		mes.addExtra(BaiMessage.TeamGui.Text_TeamInfo_1.getMes() + ": ");
-		String str2 = team.getMembers().toString();
+		mes.addExtra(BTMessage.TeamGui.Text_TeamInfo_1.getMes() + ": " + team.getTeamName() + "\n\n");
+		mes.addExtra(BTMessage.TeamGui.Text_TeamInfo_1.getMes() + ": " + team.getLeader().getName() + "\n\n");
+		mes.addExtra(BTMessage.TeamGui.Text_TeamInfo_1.getMes() + ": ");
+		String str2 = team.getMemberNames().toString();
 		str2 = str2.substring(1, str2.length() - 1).replaceAll(", ", "\n");
-		BaiMessage.Action ac1 = BaiMessage.Action.setAction("[" + team.getMembers().size() + "/" + BTConfig.getMessage().getConfig().getInt("TeamSize", 5) + "]", null, str2);
+		BTMessage.Action ac1 = BTMessage.Action.setAction("[" + team.getMembers().size() + "/" + BTConfig.getMessage().getConfig().getInt("TeamSize", 5) + "]", null, str2);
 		mes.addExtra(ac1.getText());
 		mes.addExtra("\n\n§m                             \n\n");
 		if (team.getLeader() == player) {
-			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_InvitePlayer.getMes()));
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_InvitePlayer.getMes(), "/baiteam OpenGui PlayerList", BaiMessage.TeamGui.Text_TeamInfo_InvitePlayer.getMes()).getText());
+			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_InvitePlayer.getMes()));
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_InvitePlayer.getMes(), "/baiteam OpenGui PlayerList", BTMessage.TeamGui.Text_TeamInfo_InvitePlayer.getMes()).getText());
 			mes.addExtra("\n");
-			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_Promotional.getMes()));
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_Promotional.getMes(), "/baiteam GuiPromotional " + team.getTeamName(), BaiMessage.TeamGui.Text_TeamInfo_Promotional.getMes()).getText());
+			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_Promotional.getMes()));
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_Promotional.getMes(), "/baiteam GuiPromotional " + team.getTeamName(), BTMessage.TeamGui.Text_TeamInfo_Promotional.getMes()).getText());
 			mes.addExtra("\n");
-			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam.getMes()));
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam.getMes(), "/baiteam Leave", BaiMessage.TeamGui.Text_TeamInfo_LeaveTeam.getMes()).getText());
+			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_LeaveTeam.getMes()));
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_LeaveTeam.getMes(), "/baiteam Leave", BTMessage.TeamGui.Text_TeamInfo_LeaveTeam.getMes()).getText());
 			bookGui.addPage(mes);
 			foMemberGui(bookGui, team, player);
 		} else {
-			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_InvitePlayer_Member.getMes()));
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_InvitePlayer_Member.getMes(), null, BaiMessage.TeamGui.Text_TeamInfo_InvitePlayer_Member.getMes()).getText());
+			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_InvitePlayer_Member.getMes()));
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_InvitePlayer_Member.getMes(), null, BTMessage.TeamGui.Text_TeamInfo_InvitePlayer_Member.getMes()).getText());
 			mes.addExtra("\n");
-			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_Promotional_Member.getMes()));
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_Promotional_Member.getMes(), null, BaiMessage.TeamGui.Text_TeamInfo_Promotional_Member.getMes()).getText());
+			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_Promotional_Member.getMes()));
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_Promotional_Member.getMes(), null, BTMessage.TeamGui.Text_TeamInfo_Promotional_Member.getMes()).getText());
 			mes.addExtra("\n");
-			mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes()));
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes(), "/baiteam Leave", BaiMessage.TeamGui.Text_TeamInfo_LeaveTeam_Member.getMes()).getText());
+			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes()));
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes(), "/baiteam Leave", BTMessage.TeamGui.Text_TeamInfo_LeaveTeam_Member.getMes()).getText());
 			bookGui.addPage(mes);
 		}
 		bookGui.openBook(player);
@@ -90,20 +90,20 @@ public class TeamGui {
 		}
 		mes.addExtra("§m============================\n");
 		if (page == 0) {
-			mes.addExtra(BaiMessage.TeamGui.Button_Previous_No.getMes());
+			mes.addExtra(BTMessage.TeamGui.Button_Previous_No.getMes());
 		} else {
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_Previous.getMes(), "/baiteam OpenGui TeamList " + (page - 1), null).getText());
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Previous.getMes(), "/baiteam OpenGui TeamList " + (page - 1), null).getText());
 		}
-		String str1 = BaiTools.setStringCentered("[00]", 29.0 - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Previous_No.getMes()) - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Next_No.getMes()));
+		String str1 = BaiTools.setStringCentered("[00]", 29.0 - BaiTools.getStringLength(BTMessage.TeamGui.Button_Previous_No.getMes()) - BaiTools.getStringLength(BTMessage.TeamGui.Button_Next_No.getMes()));
 		String str2 = page + "";
 		if (page <= 9) {
 			str2 = "0" + page;
 		}
 		mes.addExtra(str1 + "[" + str2 + "]" + str1);
 		if (page == i1) {
-			mes.addExtra(BaiMessage.TeamGui.Button_Next_No.getMes());
+			mes.addExtra(BTMessage.TeamGui.Button_Next_No.getMes());
 		} else {
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_Next.getMes(), "/baiteam OpenGui TeamList " + (page + 1), null).getText());
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Next.getMes(), "/baiteam OpenGui TeamList " + (page + 1), null).getText());
 		}
 		bookGui.addPage(mes);
 		bookGui.openBook(player);
@@ -128,11 +128,11 @@ public class TeamGui {
 		}
 		mes.addExtra("§m============================\n");
 		if (page == 0) {
-			mes.addExtra(BaiMessage.TeamGui.Button_Previous_No.getMes());
+			mes.addExtra(BTMessage.TeamGui.Button_Previous_No.getMes());
 		} else {
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_Previous.getMes(), "/baiteam OpenGui PlayerList " + (page - 1), null).getText());
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Previous.getMes(), "/baiteam OpenGui PlayerList " + (page - 1), null).getText());
 		}
-		String str1 = BaiTools.setStringCentered("[00]", 29.0 - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Previous_No.getMes())/* - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Next_No.getMes()) */);
+		String str1 = BaiTools.setStringCentered("[00]", 29.0 - BaiTools.getStringLength(BTMessage.TeamGui.Button_Previous_No.getMes())/* - BaiTools.getStringLength(BTMessage.TeamGui.Button_Next_No.getMes()) */);
 		String str2 = page + "";
 		if (page <= 9) {
 			str2 = "0" + page;
@@ -141,9 +141,9 @@ public class TeamGui {
 		mes.addExtra("[" + str2 + "]");
 		mes.addExtra(str1);
 		if (page == i1 || page == 0) {
-			mes.addExtra(BaiMessage.TeamGui.Button_Next_No.getMes());
+			mes.addExtra(BTMessage.TeamGui.Button_Next_No.getMes());
 		} else {
-			mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_Next.getMes(), "/baiteam OpenGui PlayerList " + (page + 1), null).getText());
+			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Next.getMes(), "/baiteam OpenGui PlayerList " + (page + 1), null).getText());
 		}
 		bookGui.addPage(mes);
 		bookGui.openBook(player);
@@ -151,15 +151,15 @@ public class TeamGui {
 
 	private TextComponent getPlayerText(String name) {
 		TextComponent mes = new TextComponent();
-		Double d1 = 29.0 - BaiTools.getStringLength(BaiMessage.TeamGui.Button_Invite.getMes()) - 2.0;
+		Double d1 = 29.0 - BaiTools.getStringLength(BTMessage.TeamGui.Button_Invite.getMes()) - 2.0;
 		if (BaiTools.getStringLength(name) > d1) {
 			String name2 = name.substring(0, (int) (d1 - 3)) + "...";
-			mes.addExtra(BaiMessage.Action.setAction(name2, null, name).getText());
+			mes.addExtra(BTMessage.Action.setAction(name2, null, name).getText());
 		} else {
 			mes.addExtra(name);
-			mes.addExtra(BaiTools.setStringRright(BaiMessage.TeamGui.Button_Invite.getMes(), 29.0 - BaiTools.getStringLength(name)));
+			mes.addExtra(BaiTools.setStringRright(BTMessage.TeamGui.Button_Invite.getMes(), 29.0 - BaiTools.getStringLength(name)));
 		}
-		mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_Invite.getMes(), "/baiteam InviteTo " + name, null).getText());
+		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Invite.getMes(), "/baiteam InviteTo " + name, null).getText());
 		mes.addExtra("\n");
 		return mes;
 	}
@@ -170,7 +170,7 @@ public class TeamGui {
 		Double d1 = 29.0 - BaiTools.getStringLength(str1) - 2.0;
 		if (BaiTools.getStringLength(team.getTeamName()) > d1) {
 			String name = team.getTeamName().substring(0, (int) (d1 - 3)) + "...";
-			mes.addExtra(BaiMessage.Action.setAction(name, null, team.getTeamName()).getText());
+			mes.addExtra(BTMessage.Action.setAction(name, null, team.getTeamName()).getText());
 			mes.addExtra("  ");
 		} else {
 			mes.addExtra(BaiTools.setStringCentered(team.getTeamName() + "  " + str1));
@@ -183,27 +183,27 @@ public class TeamGui {
 		}
 		String str2 = strings.toString();
 		str2 = str2.substring(1, str2.length() - 1).replaceAll(", ", "\n");
-		BaiMessage.Action ac1 = BaiMessage.Action.setAction("[" + team.getMembers().size() + "/" + BTConfig.getMessage().getConfig().getInt("TeamSize", 5) + "]", null, str2);
+		BTMessage.Action ac1 = BTMessage.Action.setAction("[" + team.getMembers().size() + "/" + BTConfig.getMessage().getConfig().getInt("TeamSize", 5) + "]", null, str2);
 		mes.addExtra(ac1.getText());
 		mes.addExtra("\n");
-		mes.addExtra(BaiTools.setStringCentered(BaiMessage.TeamGui.Button_JoinTeamOnList.getMes()));
-		mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_JoinTeamOnList.getMes(), "/baiteam ApplyTo " + team.getTeamName(), BaiMessage.TeamGui.Text_JoinTeamOnList.getMes()).getText());
+		mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_JoinTeamOnList.getMes()));
+		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_JoinTeamOnList.getMes(), "/baiteam ApplyTo " + team.getTeamName(), BTMessage.TeamGui.Text_JoinTeamOnList.getMes()).getText());
 		mes.addExtra("\n");
 		return mes;
 	}
 
 	private TextComponent getMemberText(String name) {
 		TextComponent mes = new TextComponent();
-		String str1 = BaiMessage.TeamGui.Button_TeamInfo_Kick.getMes() + BaiMessage.TeamGui.Button_TeamInfo_Transfer.getMes();
+		String str1 = BTMessage.TeamGui.Button_TeamInfo_Kick.getMes() + BTMessage.TeamGui.Button_TeamInfo_Transfer.getMes();
 		Double d1 = 29.0 - BaiTools.getStringLength(str1) - 2.0;
 		if (BaiTools.getStringLength(name) > d1) {
 			String name2 = name.substring(0, (int) (d1 - 3)) + "...";
-			mes.addExtra(BaiMessage.Action.setAction(name2, null, name).getText());
+			mes.addExtra(BTMessage.Action.setAction(name2, null, name).getText());
 		} else {
 			mes.addExtra(name + BaiTools.setStringRright(str1, 29.0 - BaiTools.getStringLength(name)));
 		}
-		mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_Kick.getMes(), "/baiteam GuiKick " + name, BaiMessage.TeamGui.Text_TeamInfo_Kick.getMes()).getText());
-		mes.addExtra(BaiMessage.Action.setAction(BaiMessage.TeamGui.Button_TeamInfo_Transfer.getMes(), "/baiteam GuiTransfer " + name, BaiMessage.TeamGui.Text_TeamInfo_Transfer.getMes()).getText());
+		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_Kick.getMes(), "/baiteam GuiKick " + name, BTMessage.TeamGui.Text_TeamInfo_Kick.getMes()).getText());
+		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_Transfer.getMes(), "/baiteam GuiTransfer " + name, BTMessage.TeamGui.Text_TeamInfo_Transfer.getMes()).getText());
 		mes.addExtra("\n");
 		return mes;
 	}

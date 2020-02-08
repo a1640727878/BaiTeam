@@ -1,4 +1,4 @@
-package sky_bai.bukkit.baiteam;
+package sky_bai.bukkit.baiteam.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;

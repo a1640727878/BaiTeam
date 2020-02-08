@@ -7,7 +7,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import sky_bai.bukkit.baiteam.BaiMessage;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 
 public class BTTransferTeamEvent extends BaiTeamEvent {
@@ -28,13 +28,13 @@ public class BTTransferTeamEvent extends BaiTeamEvent {
 		Player leader = getTeam().getLeader();
 		getTeam().setLeader(getPlayer());
 		List<String> list = Arrays.asList(getTeam().getTeamName(), leader.getName(), getPlayer().getName());
-		BaiMessage.send(leader, BaiMessage.TeamMesEnum.Transfer_OnLeader, list);
-		BaiMessage.send(getPlayer(), BaiMessage.TeamMesEnum.Transfer_OnPlayer, list);
+		BTMessage.send(leader, BTMessage.Team.Transfer_OnLeader, list);
+		BTMessage.send(getPlayer(), BTMessage.Team.Transfer_OnPlayer, list);
 		Set<Player> players = getTeam().getMembers();
 		players.remove(getPlayer());
 		players.remove(leader);
 		for (Player player : players) {
-			BaiMessage.send(player, BaiMessage.TeamMesEnum.Transfer_OnMembers, list);
+			BTMessage.send(player, BTMessage.Team.Transfer_OnMembers, list);
 		}
 	}
 

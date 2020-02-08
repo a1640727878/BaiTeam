@@ -7,7 +7,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import sky_bai.bukkit.baiteam.BaiMessage;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 
 public class BTKickPlayerEvent extends BaiTeamEvent {
@@ -26,16 +26,16 @@ public class BTKickPlayerEvent extends BaiTeamEvent {
 
 	private void run() {
 		if (getPlayer() == getTeam().getLeader()) {
-			BaiMessage.send(getPlayer(), BaiMessage.Error.OnPlayerKickMe, null);
+			BTMessage.send(getPlayer(), BTMessage.Error.OnPlayerKickMe, null);
 			return;
 		}
 		getTeam().delMember(getPlayer());
 		List<String> list = Arrays.asList(getTeam().getTeamName(), getTeam().getLeader().getName(), getPlayer().getName());
-		BaiMessage.send(getPlayer(), BaiMessage.TeamMesEnum.Kick_OnPlayer, list);
-		BaiMessage.send(getTeam().getLeader(), BaiMessage.TeamMesEnum.Kick_OnLeader, list);
+		BTMessage.send(getPlayer(), BTMessage.Team.Kick_OnPlayer, list);
+		BTMessage.send(getTeam().getLeader(), BTMessage.Team.Kick_OnLeader, list);
 		Set<Player> players = getTeam().getMembers();
 		for (Player player : players) {
-			BaiMessage.send(player, BaiMessage.TeamMesEnum.Kick_OnMembers, list);
+			BTMessage.send(player, BTMessage.Team.Kick_OnMembers, list);
 		}
 	}
 
