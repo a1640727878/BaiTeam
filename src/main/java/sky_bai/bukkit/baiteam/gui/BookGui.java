@@ -7,7 +7,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.BookMeta.Generation;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import sky_bai.bukkit.baiteam.util.BTProtocol;
+import sky_bai.bukkit.baiteam.BaiTeam;
 
 public class BookGui {
 	private ItemStack bookItemStack;
@@ -36,6 +36,6 @@ public class BookGui {
 	
 	public void openBook(Player player) {
 		bookItemStack.setItemMeta(bookMeta);
-		BTProtocol.openBook(bookItemStack, player);
+		BaiTeam.getInstance().openBook(bookItemStack, player);
 	}
 }

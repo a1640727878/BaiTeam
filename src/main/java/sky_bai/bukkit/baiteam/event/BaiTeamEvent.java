@@ -14,30 +14,18 @@ public class BaiTeamEvent extends Event implements Cancellable {
 
 	private Team team;
 	private Player player;
-	
-	public BaiTeamEvent(Team team,Player player) {
+
+	public BaiTeamEvent(Team team, Player player) {
 		this.team = team;
 		this.player = player;
 	}
-	
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-	
+
 	public Player getPlayer() {
 		return player;
 	}
-	
-	public void setTeam(Team team) {
-		this.team = team;
-	}
-	
+
 	public Team getTeam() {
 		return team;
-	}
-
-	public static HandlerList getHandlerList() {
-		return HANDLERS;
 	}
 
 	@Override
@@ -45,14 +33,26 @@ public class BaiTeamEvent extends Event implements Cancellable {
 		return HANDLERS;
 	}
 
-	@Override
-	public boolean isCancelled() {
-		return isCancelled;
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	public void setTeam(Team team) {
+		this.team = team;
 	}
 
 	@Override
 	public void setCancelled(boolean cancel) {
 		this.isCancelled = cancel;
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return isCancelled;
 	}
 
 }

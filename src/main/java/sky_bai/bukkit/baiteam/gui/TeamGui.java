@@ -1,244 +1,279 @@
 package sky_bai.bukkit.baiteam.gui;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.TextComponent;
+import sky_bai.bukkit.baiteam.BaiTeam;
 import sky_bai.bukkit.baiteam.config.BTConfig;
 import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
-import sky_bai.bukkit.baiteam.util.BaiTools;
+import sky_bai.bukkit.baiteam.util.BTTools;
 
 public class TeamGui {
-	private static TeamGui tGui = new TeamGui();
 
-	public static TeamGui getGui() {
-		return tGui;
-	}
-
-	public void openMainGui(Player player) {
+	public static void openGui(Player player, String name, int i) {
+		FileConfiguration config = BTConfig.getGui().getConfig();
+		List<String> strs = config.getStringList(name);
+		if (strs.size() < 1) {
+			openPageGui(player, config.getConfigurationSection(name));
+			return;
+		}
 		BookGui bookGui = BookGui.getBookGui();
-		TextComponent mes = new TextComponent();
-		mes.addExtra("§m============================\n\n\n\n\n");
-		mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_CreateTeam.getMes()));
-		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_CreateTeam.getMes(), "/baiteam Create", BTMessage.TeamGui.Text_CreateTeam.getMes()).getText());
-		mes.addExtra("\n\n");
-		mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_JoinTeam.getMes()));
-		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_JoinTeam.getMes(), "/baiteam OpenGui TeamList", BTMessage.TeamGui.Text_JoinTeam.getMes()).getText());
-		mes.addExtra("\n\n\n\n\n§m============================");
-		bookGui.addPage(mes);
+		bookGui.addPage(setPage(player, strs, i));
 		bookGui.openBook(player);
 	}
 
-	public void openTeamInfoGui(Player player, Team team) {
+	private static void openPageGui(Player player, ConfigurationSection config) {
 		BookGui bookGui = BookGui.getBookGui();
-		TextComponent mes = new TextComponent();
-		String str1 = BTMessage.TeamGui.Text_TeamInfo.getMes();
-		mes.addExtra(BaiTools.setStringCentered(str1) + str1 + "\n\n");
-		mes.addExtra(BTMessage.TeamGui.Text_TeamInfo_1.getMes() + ": " + team.getTeamName() + "\n\n");
-		mes.addExtra(BTMessage.TeamGui.Text_TeamInfo_1.getMes() + ": " + team.getLeader().getName() + "\n\n");
-		mes.addExtra(BTMessage.TeamGui.Text_TeamInfo_1.getMes() + ": ");
-		String str2 = team.getMemberNames().toString();
-		str2 = str2.substring(1, str2.length() - 1).replaceAll(", ", "\n");
-		BTMessage.Action ac1 = BTMessage.Action.setAction("[" + team.getMembers().size() + "/" + BTConfig.getMessage().getConfig().getInt("TeamSize", 5) + "]", null, str2);
-		mes.addExtra(ac1.getText());
-		mes.addExtra("\n\n§m                             \n\n");
-		if (team.getLeader() == player) {
-			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_InvitePlayer.getMes()));
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_InvitePlayer.getMes(), "/baiteam OpenGui PlayerList", BTMessage.TeamGui.Text_TeamInfo_InvitePlayer.getMes()).getText());
-			mes.addExtra("\n");
-			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_Promotional.getMes()));
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_Promotional.getMes(), "/baiteam GuiPromotional " + team.getTeamName(), BTMessage.TeamGui.Text_TeamInfo_Promotional.getMes()).getText());
-			mes.addExtra("\n");
-			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_LeaveTeam.getMes()));
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_LeaveTeam.getMes(), "/baiteam Leave", BTMessage.TeamGui.Text_TeamInfo_LeaveTeam.getMes()).getText());
-			bookGui.addPage(mes);
-			foMemberGui(bookGui, team, player);
-		} else {
-			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_InvitePlayer_Member.getMes()));
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_InvitePlayer_Member.getMes(), null, BTMessage.TeamGui.Text_TeamInfo_InvitePlayer_Member.getMes()).getText());
-			mes.addExtra("\n");
-			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_Promotional_Member.getMes()));
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_Promotional_Member.getMes(), null, BTMessage.TeamGui.Text_TeamInfo_Promotional_Member.getMes()).getText());
-			mes.addExtra("\n");
-			mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes()));
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_LeaveTeam_Member.getMes(), "/baiteam Leave", BTMessage.TeamGui.Text_TeamInfo_LeaveTeam_Member.getMes()).getText());
-			bookGui.addPage(mes);
+		Set<String> keys = config.getKeys(false);
+		for (String key : keys) {
+			List<String> strs = config.getStringList(key);
+			bookGui.addPage(setPage(player, strs, 0));
 		}
 		bookGui.openBook(player);
 	}
 
-	public void openTeamListGui(Player player, List<Team> teams, int page) {
-		BookGui bookGui = BookGui.getBookGui();
+	private static TextComponent setPage(Player player, List<String> strs, int i) {
 		TextComponent mes = new TextComponent();
-		int i1 = teams.size() % 6 > 0 ? teams.size() / 6 + 1 : teams.size() / 6;
-		page = page > i1 ? i1 : page;
-		for (int i = 0; i < 6; i++) {
-			if (teams.size() <= (6 * page + i)) {
+		for (String str : strs) {
+			String str1 = setPlaceholder(str, i);
+			str1 = PlaceholderAPI.setPlaceholders(player, str1);
+			if (str1.startsWith("[Text]", 0)) {
+				mes.addExtra(str1.replace("[Text]", ""));
+			} else if (str1.startsWith("[Action]", 0)) {
+				TextComponent tc = runAction(player, str1.replace("[Action]", ""), i);
+				if (tc != null) {
+					mes.addExtra(tc);
+				}
+			} else if (str1.startsWith("[Centered]", 0)) {
+				mes.addExtra(runSize(str1.replace("[Centered]", ""), i));
+			} else if (str1.startsWith("[Module]", 0)) {
+				mes.addExtra(runModule(player, str1.replace("[Module]", ""), i));
+			}
+		}
+		return mes;
+	}
+
+	private static String setPlaceholder(String str, int page) {
+		str = setPlaceholder(str, page, 0, 0);
+		return str;
+	}
+
+	private static String setPlaceholder(String str, int page, int size, int i) {
+		str = str.replaceAll("&<p>", "" + page);
+		str = str.replaceAll("&<p\\+>", "" + (page + 1));
+		str = str.replaceAll("&<p->", "" + (page - 1));
+		str = str.replaceAll("\\&\\<\\?\\>", "" + ((size * page) + i));
+		return str;
+	}
+
+	private static String runSize(String text, int page) {
+		if (text.indexOf("[") != 0 || text.indexOf("]") == -1) {
+			return "";
+		}
+		String str = text.substring(1, text.indexOf("]"));
+		text = setPlaceholder(text, page);
+		text = PlaceholderAPI.setPlaceholders(null, text);
+		Double size = 0.0;
+		try {
+			size = Double.valueOf(str);
+		} catch (NumberFormatException e) {
+			System.out.println(str + "不是数字");
+		}
+		return BTTools.setStringCentered(text.replace("[" + str + "]", ""), size);
+	}
+
+	private static TextComponent runAction(Player player, String text, int i) {
+		ConfigurationSection config = BTConfig.getAction().getConfig().getConfigurationSection(text);
+		Set<String> keys = config.getKeys(false);
+		if (keys.contains("Text") == false) {
+			return null;
+		}
+		BTMessage.Action ac1 = BTMessage.Action.setAction(PlaceholderAPI.setPlaceholders(player, setPlaceholder(config.getString("Text"), i)));
+		if (keys.contains("Command")) {
+			ac1.setCommand(PlaceholderAPI.setPlaceholders(player, setPlaceholder(config.getString("Command"), i)));
+		}
+		if (keys.contains("ShowText")) {
+			ac1.setText(PlaceholderAPI.setPlaceholders(player, setPlaceholder(config.getString("ShowText"), i)));
+		}
+		return ac1.getText();
+	}
+
+	private static TextComponent runCustomModuleAction(Player player, String text, int size, int page, int i) {
+		ConfigurationSection config = BTConfig.getAction().getConfig().getConfigurationSection(text);
+		Set<String> keys = config.getKeys(false);
+		if (keys.contains("Text") == false) {
+			return null;
+		}
+		String Text = config.getString("Text");
+		Text = setPlaceholder(Text, page, size, i);
+		Text = PlaceholderAPI.setPlaceholders(player, Text);
+		BTMessage.Action ac1 = BTMessage.Action.setAction(Text);
+		if (keys.contains("Command")) {
+			String str = config.getString("Command");
+			str = setPlaceholder(str, page, size, i);
+			str = PlaceholderAPI.setPlaceholders(player, str);
+			ac1.setCommand(str);
+		}
+		if (keys.contains("ShowText")) {
+			String str = config.getString("ShowText");
+			str = setPlaceholder(str, page, size, i);
+			str = PlaceholderAPI.setPlaceholders(player, str);
+			ac1.setText(str);
+		}
+		return ac1.getText();
+	}
+
+	private static TextComponent runModule(Player player, String text, int page) {
+		TextComponent mes = new TextComponent();
+		if (text.indexOf("[") != 0 || text.indexOf("]") == -1) {
+			return mes;
+		}
+		String str = text.substring(1, text.indexOf("]"));
+		Integer size = 0;
+		try {
+			size = Integer.valueOf(str);
+		} catch (NumberFormatException e) {
+			System.out.println(str + "不是整数");
+		}
+		ConfigurationSection config = BTConfig.getModule().getConfig().getConfigurationSection(text.replace("[" + str + "]", ""));
+		String type = config.getString("Type");
+		List<String> moduleList = config.getStringList("List");
+		int nullint = config.getInt("Row");
+		switch (type) {
+		case "Player": {
+			String collection = config.getString("Collection");
+			switch (collection) {
+			case "MembersNoLeader": {
+				Team team = BaiTeam.getTeamManager().getTeam(player, false);
+				List<Player> players = new ArrayList<Player>(team.getMembers());
+				players.remove(team.getLeader());
+				mes.addExtra(getPlayerModule(players, moduleList, nullint, size, page));
 				break;
 			}
-			mes.addExtra(getTeamText(teams.get(6 * page + i)));
-		}
-		if (page == i1 && teams.size() % 6 > 0) {
-			for (int i = 0; i < teams.size() % 6; i++) {
-				mes.addExtra("\n\n");
 			}
+			break;
 		}
-		mes.addExtra("§m============================\n");
-		if (page == 0) {
-			mes.addExtra(BTMessage.TeamGui.Button_Previous_No.getMes());
-		} else {
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Previous.getMes(), "/baiteam OpenGui TeamList " + (page - 1), null).getText());
-		}
-		String str1 = BaiTools.setStringCentered("[00]", 29.0 - BaiTools.getStringLength(BTMessage.TeamGui.Button_Previous_No.getMes()) - BaiTools.getStringLength(BTMessage.TeamGui.Button_Next_No.getMes()));
-		String str2 = page + "";
-		if (page <= 9) {
-			str2 = "0" + page;
-		}
-		mes.addExtra(str1 + "[" + str2 + "]" + str1);
-		if (page == i1) {
-			mes.addExtra(BTMessage.TeamGui.Button_Next_No.getMes());
-		} else {
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Next.getMes(), "/baiteam OpenGui TeamList " + (page + 1), null).getText());
-		}
-		bookGui.addPage(mes);
-		bookGui.openBook(player);
-	}
-
-	public void openPlayerListGui(Player player, List<Player> players, int page) {
-		BookGui bookGui = BookGui.getBookGui();
-		TextComponent mes = new TextComponent();
-		List<Player> p1 = players;
-		int i1 = p1.size() % 12 > 0 ? p1.size() / 12 + 1 : p1.size() / 12;
-		page = page > i1 ? i1 : page;
-		for (int i = 0; i < 12; i++) {
-			if (p1.size() <= (12 * page + i)) {
-				break;
-			}
-			mes.addExtra(getPlayerText(p1.get(12 * page + i).getName()));
-		}
-		if (page == i1 && p1.size() % 12 > 0) {
-			for (int i = 0; i < p1.size() % 12; i++) {
-				mes.addExtra("\n");
-			}
-		}
-		mes.addExtra("§m============================\n");
-		if (page == 0) {
-			mes.addExtra(BTMessage.TeamGui.Button_Previous_No.getMes());
-		} else {
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Previous.getMes(), "/baiteam OpenGui PlayerList " + (page - 1), null).getText());
-		}
-		String str1 = BaiTools.setStringCentered("[00]", 29.0 - BaiTools.getStringLength(BTMessage.TeamGui.Button_Previous_No.getMes())/* - BaiTools.getStringLength(BTMessage.TeamGui.Button_Next_No.getMes()) */);
-		String str2 = page + "";
-		if (page <= 9) {
-			str2 = "0" + page;
-		}
-		mes.addExtra(str1);
-		mes.addExtra("[" + str2 + "]");
-		mes.addExtra(str1);
-		if (page == i1 || page == 0) {
-			mes.addExtra(BTMessage.TeamGui.Button_Next_No.getMes());
-		} else {
-			mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Next.getMes(), "/baiteam OpenGui PlayerList " + (page + 1), null).getText());
-		}
-		bookGui.addPage(mes);
-		bookGui.openBook(player);
-	}
-
-	private TextComponent getPlayerText(String name) {
-		TextComponent mes = new TextComponent();
-		Double d1 = 29.0 - BaiTools.getStringLength(BTMessage.TeamGui.Button_Invite.getMes()) - 2.0;
-		if (BaiTools.getStringLength(name) > d1) {
-			String name2 = name.substring(0, (int) (d1 - 3)) + "...";
-			mes.addExtra(BTMessage.Action.setAction(name2, null, name).getText());
-		} else {
-			mes.addExtra(name);
-			mes.addExtra(BaiTools.setStringRright(BTMessage.TeamGui.Button_Invite.getMes(), 29.0 - BaiTools.getStringLength(name)));
-		}
-		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_Invite.getMes(), "/baiteam InviteTo " + name, null).getText());
-		mes.addExtra("\n");
-		return mes;
-	}
-
-	private TextComponent getTeamText(Team team) {
-		TextComponent mes = new TextComponent();
-		String str1 = "[" + team.getMembers().size() + "/" + BTConfig.getMessage().getConfig().getInt("TeamSize", 5) + "]";
-		Double d1 = 29.0 - BaiTools.getStringLength(str1) - 2.0;
-		if (BaiTools.getStringLength(team.getTeamName()) > d1) {
-			String name = team.getTeamName().substring(0, (int) (d1 - 3)) + "...";
-			mes.addExtra(BTMessage.Action.setAction(name, null, team.getTeamName()).getText());
-			mes.addExtra("  ");
-		} else {
-			mes.addExtra(BaiTools.setStringCentered(team.getTeamName() + "  " + str1));
-			mes.addExtra(team.getTeamName());
-			mes.addExtra("  ");
-		}
-		Set<String> strings = new HashSet<String>();
-		for (Player player : team.getMembers()) {
-			strings.add(player.getName());
-		}
-		String str2 = strings.toString();
-		str2 = str2.substring(1, str2.length() - 1).replaceAll(", ", "\n");
-		BTMessage.Action ac1 = BTMessage.Action.setAction("[" + team.getMembers().size() + "/" + BTConfig.getMessage().getConfig().getInt("TeamSize", 5) + "]", null, str2);
-		mes.addExtra(ac1.getText());
-		mes.addExtra("\n");
-		mes.addExtra(BaiTools.setStringCentered(BTMessage.TeamGui.Button_JoinTeamOnList.getMes()));
-		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_JoinTeamOnList.getMes(), "/baiteam ApplyTo " + team.getTeamName(), BTMessage.TeamGui.Text_JoinTeamOnList.getMes()).getText());
-		mes.addExtra("\n");
-		return mes;
-	}
-
-	private TextComponent getMemberText(String name) {
-		TextComponent mes = new TextComponent();
-		String str1 = BTMessage.TeamGui.Button_TeamInfo_Kick.getMes() + BTMessage.TeamGui.Button_TeamInfo_Transfer.getMes();
-		Double d1 = 29.0 - BaiTools.getStringLength(str1) - 2.0;
-		if (BaiTools.getStringLength(name) > d1) {
-			String name2 = name.substring(0, (int) (d1 - 3)) + "...";
-			mes.addExtra(BTMessage.Action.setAction(name2, null, name).getText());
-		} else {
-			mes.addExtra(name + BaiTools.setStringRright(str1, 29.0 - BaiTools.getStringLength(name)));
-		}
-		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_Kick.getMes(), "/baiteam GuiKick " + name, BTMessage.TeamGui.Text_TeamInfo_Kick.getMes()).getText());
-		mes.addExtra(BTMessage.Action.setAction(BTMessage.TeamGui.Button_TeamInfo_Transfer.getMes(), "/baiteam GuiTransfer " + name, BTMessage.TeamGui.Text_TeamInfo_Transfer.getMes()).getText());
-		mes.addExtra("\n");
-		return mes;
-	}
-
-	private void foMemberGui(BookGui bookGui, Team team, Player player) {
-		Set<Player> players = team.getMembers();
-		if (players.size() > 13) {
-			List<Player> players_2 = new ArrayList<Player>(players);
-			int i1 = players.size() % 13 > 0 ? players.size() / 13 + 1 : players.size() / 13;
-			for (int i = 0; i < i1; i++) {
-				TextComponent mes = new TextComponent();
-				for (int j = 0; j < 13; j++) {
-					if (players_2.get(i * 13 + j) == null) {
-						break;
-					}
-					mes.addExtra(getMemberText(players_2.get(i * 13 + j).getName()));
+		case "Custom": {
+			int listSize = config.getInt("Amount", 0);
+			if (listSize < 1) {
+				try {
+					listSize = Integer.valueOf(PlaceholderAPI.setPlaceholders(null, config.getString("Amount")));
+				} catch (NumberFormatException e) {
+					System.out.println(PlaceholderAPI.setPlaceholders(null, config.getString("Amount")) + "不是整数");
 				}
-				if (players.size() - (i * 13) < 13) {
-					for (int j = 0; j < 13 - (players.size() - (i * 13)); j++) {
-						mes.addExtra("\n");
-					}
-				}
-				mes.addExtra("\n§m============================\n");
-				bookGui.addPage(mes);
 			}
-		} else {
-			TextComponent mes = new TextComponent();
-			for (Player player2 : players) {
-				mes.addExtra(getMemberText(player2.getName()));
-			}
-			for (int i = 0; i < 13 - players.size(); i++) {
-				mes.addExtra("\n");
-			}
-			mes.addExtra("\n§m============================\n");
-			bookGui.addPage(mes);
+			mes.addExtra(getCustomModule(listSize, moduleList, nullint, size, page));
+			break;
 		}
+		}
+		return mes;
+	}
+
+	private static TextComponent getModuleList(Player player, List<String> strs, int i) {
+		TextComponent mes = new TextComponent();
+		for (String str : strs) {
+			String str1 = setPlaceholder(str, i);
+			str1 = PlaceholderAPI.setPlaceholders(player, str);
+			if (str1.startsWith("[Text]", 0)) {
+				mes.addExtra(str1.replace("[Text]", ""));
+			} else if (str1.startsWith("[Action]", 0)) {
+				TextComponent tc = runAction(player, str1.replace("[Action]", ""), i);
+				if (tc != null) {
+					mes.addExtra(tc);
+				}
+			} else if (str1.startsWith("[Centered]", 0)) {
+				mes.addExtra(runSize(str1.replace("[Centered]", ""), i));
+			}
+		}
+		return mes;
+	}
+
+	private static TextComponent getPlayerModule(List<Player> players, List<String> strs, int nullint, int size, int page) {
+		page = getPageInt(players.size(), size, page);
+		TextComponent mes = new TextComponent();
+		int i1 = size;
+		int listSize = players.size() ;
+		if (listSize - size * page != size) {
+			i1 = players.size() - size * page;
+		}
+		if (listSize == 0) {
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < nullint; j++) {
+					mes.addExtra("\n");
+				}
+			}
+		}
+		for (int i = 0; i < i1; i++) {
+			if (players.isEmpty()) {
+				continue;
+			}
+			mes.addExtra(getModuleList(players.get((size * page) + i), strs, page));
+		}
+		if (i1 != size) {
+			for (int i = 0; i < size - i1; i++) {
+				for (int j = 0; j < nullint; j++) {
+					mes.addExtra("\n");
+				}
+			}
+		}
+		return mes;
+	}
+
+	private static TextComponent getCustomModule(int listSize, List<String> strs, int nullint, int size, int page) {
+		page = getPageInt(listSize, size, page);
+		TextComponent mes = new TextComponent();
+		int i1 = size;
+		if (listSize - size * page != size) {
+			i1 = listSize - size * page;
+		}
+		if (listSize == 0) {
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < nullint; j++) {
+					mes.addExtra("\n");
+				}
+			}
+		}
+		for (int i = 0; i < listSize; i++) {
+			TextComponent mes1 = new TextComponent();
+			for (String str : strs) {
+				str = setPlaceholder(str, page, size, i);
+				str = PlaceholderAPI.setPlaceholders(null, str);
+				if (str.startsWith("[Text]", 0)) {
+					mes1.addExtra(str.replace("[Text]", ""));
+				} else if (str.startsWith("[Action]", 0)) {
+					TextComponent tc = runCustomModuleAction(null, str.replace("[Action]", ""), size, page, i);
+					if (tc != null) {
+						mes1.addExtra(tc);
+					}
+				} else if (str.startsWith("[Centered]", 0)) {
+					mes1.addExtra(runSize(str.replace("[Centered]", ""), i));
+				}
+			}
+			mes.addExtra(mes1);
+		}
+		if (i1 != size) {
+			for (int i = 0; i < size - i1; i++) {
+				for (int j = 0; j < nullint; j++) {
+					mes.addExtra("\n");
+				}
+			}
+		}
+		return mes;
+	}
+
+	private static int getPageInt(int listSize, int size, int page) {
+		page = page < 0 ? 0 : page;
+		while (listSize < size * page || listSize - size * page == 0) {
+			page = page - 1;
+		}
+		return page;
 	}
 }

@@ -64,7 +64,9 @@ public class BTMessage {
 
 	interface BaiMes {
 		public String getKey();
+
 		public void setMes(String mes);
+
 		public String getMes();
 	}
 
@@ -82,6 +84,19 @@ public class BTMessage {
 		public static Action setAction(@Nonnull String str, @Nullable String command, @Nullable String text) {
 			Action action = new Action(str, command, text);
 			return action;
+		}
+
+		public static Action setAction(String str) {
+			Action action = new Action(str, null, null);
+			return action;
+		}
+
+		public void setCommand(String command) {
+			this.command = command;
+		}
+
+		public void setText(String text) {
+			this.text = text;
 		}
 
 		public TextComponent getText() {
@@ -140,20 +155,20 @@ public class BTMessage {
 		Leave_OnMember_Member("Team.Leave_OnMember_Member", "你离开了队伍 [&{0}]"),
 		Join_Apply_ApplyForPlayer("Team.Join_Apply_ApplyForPlayer", "你向队伍 [&{0}] 提交了申请 "),
 		Join_Apply_ApplyForLeader("Team.Join_Apply_ApplyForLeader", "&{2} 申请加入你的队伍"),
-		Join_Apply_PlayerNoApply("Team.Join_Apply_Member", "&{2} 没有向你的队伍发过申请"),
-		Join_Apply_Yes("Team.Join_Apply_PlayerNoApply", "队伍 [&{0}] 同意了你的申请"),
+		Join_Apply_PlayerNoApply("Team.Join_Apply_PlayerNoApply", "&{2} 没有向你的队伍发过申请"),
+		Join_Apply_Yes("Team.Join_Apply_Yes", "队伍 [&{0}] 同意了你的申请"),
 		Join_Apply_YesFoLeader("Team.Join_Apply_YesFoLeader", "你同意了 &{2} 的入队申请"),
 		Join_Apply_No("Team.Join_Apply_No", "队伍 [&{0}] 拒绝了你的申请"),
 		Join_Apply_NoFoLeader("Team.Join_Apply_NoFoLeader", "你拒绝了 &{2} 的入队申请"),
 		Join_Invite_InviteForPlayer("Team.Join_Invite_InviteForPlayer", "队伍 [&{0}] 邀请你加入"),
-		Join_Invite_InviteForLeader("Team.Join_Invite_Member", "你已经向 &{2} 发出邀请"),
-		Join_Invite_TeamNoInvite("Team.Join_Invite_InviteForLeader", "这个队伍没有邀请过你"),
+		Join_Invite_InviteForLeader("Team.Join_Invite_InviteForLeader", "你已经向 &{2} 发出邀请"),
+		Join_Invite_TeamNoInvite("Team.Join_Invite_TeamNoInvite", "这个队伍没有邀请过你"),
 		Join_Invite_Yes("Team.Join_Invite_Yes", "&{2} 接受了你的邀请"),
 		Join_Invite_YesFoMember("Team.Join_Invite_YesFoMember", "你接受了队伍 [&{0}] 的邀请"),
 		Join_Invite_No("Team.Join_Invite_No", "&{2} 拒绝了你的邀请"),
 		Join_Invite_NoFoMember("Team.Join_Invite_NoFoMember", "你拒绝了队伍 [&{0}] 的邀请"),
-		Join_Members("Team.Join_Invite_Member", "&{2} 加入了队伍"),
-		Join_Member("Team.Join_Invite_Member", "你加入了队伍 [&{0}]"),
+		Join_Members("Team.Join_Members", "&{2} 加入了队伍"),
+		Join_Member("Team.Join_Member", "你加入了队伍 [&{0}]"),
 		Transfer_OnLeader("Team.Transfer_OnLeader", "你把队伍 [&{0}] 转让给了 &{2}"),
 		Transfer_OnPlayer("Team.Transfer_OnPlayer", "&{1} 把队伍 [&{0}] 转让给了你"),
 		Transfer_OnMembers("Team.Transfer_OnMembers", "&{1} 把队伍 [&{0}] 转让给了 &{2}"),
@@ -215,62 +230,7 @@ public class BTMessage {
 		public String getMes() {
 			return mes;
 		}
-		
-		public void setMes(String mes) {
-			this.mes = mes;
-		}
-	}
 
-	public enum TeamGui {
-
-		Button_CreateTeam("TeamGui.Button_CreateTeam", "[创建队伍]"),
-		Text_CreateTeam("TeamGui.Text_CreateTeam", "创建你的队伍"),
-		Button_JoinTeam("TeamGui.Button_JoinTeam", "[加入队伍]"),
-		Text_JoinTeam("TeamGui.Text_JoinTeam", "寻找可以加入的队伍"),
-		Text_TeamInfo("TeamGui.Text_TeamInfo", "[队伍信息]"),
-		Text_TeamInfo_1("TeamGui.Text_TeamInfo_1", "队伍名字"),
-		Text_TeamInfo_2("TeamGui.Text_TeamInfo_2", "队长名字"),
-		Text_TeamInfo_3("TeamGui.Text_TeamInfo_3", "队伍人数"),
-		Button_TeamInfo_InvitePlayer("TeamGui.Button_TeamInfo_InvitePlayer", "[邀请玩家]"),
-		Text_TeamInfo_InvitePlayer("TeamGui.Text_TeamInfo_InvitePlayer", "点击查看未加入队伍的玩家"),
-		Button_TeamInfo_InvitePlayer_Member("TeamGui.Button_TeamInfo_InvitePlayer_Member", "[§7邀请玩家§r]"),
-		Text_TeamInfo_InvitePlayer_Member("TeamGui.Text_TeamInfo_InvitePlayer_Member", "只有队长可以邀请玩家"),
-		Button_TeamInfo_Promotional("TeamGui.Button_TeamInfo_Promotional", "[公开招募]"),
-		Text_TeamInfo_Promotional("TeamGui.Text_TeamInfo_Promotional", "发布队伍招募公告"),
-		Button_TeamInfo_Promotional_Member("TeamGui.Button_TeamInfo_Promotional_Member", "[§7公开招募§r]"),
-		Text_TeamInfo_Promotional_Member("TeamGui.Text_TeamInfo_Promotional_Member", "只有队长可以发布招募公告"),
-		Button_TeamInfo_LeaveTeam("TeamGui.Button_TeamInfo_LeaveTeam", "[解散队伍]"),
-		Text_TeamInfo_LeaveTeam("TeamGui.Text_TeamInfo_LeaveTeam", "点击解散队伍"),
-		Button_TeamInfo_LeaveTeam_Member("TeamGui.Button_TeamInfo_LeaveTeam_Member", "[离开队伍]"),
-		Text_TeamInfo_LeaveTeam_Member("TeamGui.Text_TeamInfo_LeaveTeam_Member", "点击离开队伍"),
-		Button_TeamInfo_Kick("TeamGui.Button_TeamInfo_Kick", "[踢出]"),
-		Text_TeamInfo_Kick("TeamGui.Text_TeamInfo_Kick", "将玩家踢出队伍"),
-		Button_TeamInfo_Transfer("TeamGui.Button_TeamInfo_Transfer", "[转让]"),
-		Text_TeamInfo_Transfer("TeamGui.Text_TeamInfo_Transfer", "把队伍转让给玩家"),
-		Button_JoinTeamOnList("TeamGui.Button_JoinTeamOnList", "[申请加入]"),
-		Text_JoinTeamOnList("TeamGui.Text_JoinTeamOnList", "点击申请加入队伍"),
-		Button_Previous("TeamGui.Button_Previous", "[上一页]"),
-		Button_Previous_No("TeamGui.Button_Previous_No", "[§7上一页§r]"),
-		Button_Next("TeamGui.Button_Next", "[下一页]"),
-		Button_Next_No("TeamGui.Button_Next_No", "[§7下一页§r]"),
-		Button_Invite("TeamGui.Button_Invite", "[邀请]");
-
-		private String key = null;
-		private String mes = null;
-
-		TeamGui(String key, String mes) {
-			this.key = key;
-			this.mes = mes;
-		}
-
-		public String getKey() {
-			return key;
-		}
-
-		public String getMes() {
-			return mes;
-		}
-		
 		public void setMes(String mes) {
 			this.mes = mes;
 		}

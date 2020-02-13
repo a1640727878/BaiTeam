@@ -5,10 +5,10 @@ api-version: 1.13
 depend: 
 - DungeonsXL
 - ProtocolLib
-softdepend: 
 - PlaceholderAPI
 authors: 
 - sky_bai
+
 
 commands: 
   BaiTeam: 

@@ -53,14 +53,6 @@ public class BTMessageConfig implements BTConfig.Config {
 				mes.setMes(config.getString(mes.getKey()));
 			}
 		}
-		BTMessage.TeamGui[] btm4 = BTMessage.TeamGui.values();
-		for (BTMessage.TeamGui mes : btm4) {
-			if (config.contains(mes.getKey()) == false) {
-				config.set(mes.getKey(), mes.getMes());
-			} else {
-				mes.setMes(config.getString(mes.getKey()));
-			}
-		}
 		config.save(configFile);
 	}
 

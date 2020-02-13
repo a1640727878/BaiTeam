@@ -9,46 +9,78 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import de.erethon.dungeonsxl.DungeonsXL;
+import de.erethon.dungeonsxl.command.LeaveCommand;
 import de.erethon.dungeonsxl.dungeon.Dungeon;
-import de.erethon.dungeonsxl.event.dplayer.DPlayerLeaveDGroupEvent;
-import de.erethon.dungeonsxl.event.dplayer.instance.game.DGamePlayerEscapeEvent;
 import de.erethon.dungeonsxl.game.Game;
-import de.erethon.dungeonsxl.player.DEditPlayer;
 import de.erethon.dungeonsxl.player.DGamePlayer;
-import de.erethon.dungeonsxl.player.DGlobalPlayer;
 import de.erethon.dungeonsxl.player.DGroup;
 import de.erethon.dungeonsxl.player.DInstancePlayer;
 import de.erethon.dungeonsxl.world.DGameWorld;
 import de.erethon.dungeonsxl.world.DResourceWorld;
 import sky_bai.bukkit.baiteam.BaiTeam;
-import sky_bai.bukkit.baiteam.config.BTConfig;
-import sky_bai.bukkit.baiteam.event.BTAcceptPlayerApplyEvent;
-import sky_bai.bukkit.baiteam.event.BTAcceptTeamInviteEvent;
-import sky_bai.bukkit.baiteam.event.BTCreateTeamEvent;
-import sky_bai.bukkit.baiteam.event.BTKickPlayerEvent;
-import sky_bai.bukkit.baiteam.event.BTLeaveTeamEvent;
-import sky_bai.bukkit.baiteam.event.BTPlayerApplyEvent;
-import sky_bai.bukkit.baiteam.event.BTPromotionalTeamEvent;
-import sky_bai.bukkit.baiteam.event.BTTeamInviteEvent;
-import sky_bai.bukkit.baiteam.event.BTTransferTeamEvent;
+import sky_bai.bukkit.baiteam.event.BTEAcceptPlayerApplyEvent;
+import sky_bai.bukkit.baiteam.event.BTEAcceptTeamInviteEvent;
+import sky_bai.bukkit.baiteam.event.BTECreateTeamEvent;
+import sky_bai.bukkit.baiteam.event.BTEKickPlayerEvent;
+import sky_bai.bukkit.baiteam.event.BTELeaveTeamEvent;
+import sky_bai.bukkit.baiteam.event.BTEPlayerApplyEvent;
+import sky_bai.bukkit.baiteam.event.BTEPromotionalTeamEvent;
+import sky_bai.bukkit.baiteam.event.BTETeamInviteEvent;
+import sky_bai.bukkit.baiteam.event.BTETransferTeamEvent;
 import sky_bai.bukkit.baiteam.gui.TeamGui;
 import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 import sky_bai.bukkit.baiteam.team.TeamTeleport;
 
 public class BTCommand {
-	public static boolean ifPlayerTeleport(Player player1, Player player2) {
+	private static boolean ifPlayerTeleport(Player player1, Player player2) {
 		if (player1.getWorld() != player2.getWorld()) {
 			return false;
 		}
 		double x = (player1.getLocation().getX() > player2.getLocation().getX()) ? (player1.getLocation().getX() - player2.getLocation().getX()) : (player2.getLocation().getX() - player1.getLocation().getX());
 		double y = (player1.getLocation().getY() > player2.getLocation().getY()) ? (player1.getLocation().getY() - player2.getLocation().getY()) : (player2.getLocation().getY() - player1.getLocation().getY());
 		double z = (player1.getLocation().getZ() > player2.getLocation().getZ()) ? (player1.getLocation().getZ() - player2.getLocation().getZ()) : (player2.getLocation().getZ() - player1.getLocation().getZ());
-		return ((x + y + z) <= 10);
+		return ((x + y + z) >= 10);
+	}
+
+	public static boolean play(Player player, String[] args) {
+		DungeonsXL dungeonsXL = DungeonsXL.getInstance();
+		if (args.length < 3 || dungeonsXL.getDWorldCache().getResourceByName(args[2]) == null || dungeonsXL.getDPlayerCache().getByPlayer(player) instanceof DInstancePlayer) {
+			return false;
+		}
+		DResourceWorld resource = dungeonsXL.getDWorldCache().getResourceByName(args[2]);
+		Dungeon dungeon = new Dungeon(dungeonsXL, resource);
+		if (BaiTeam.getTeamManager().ifOnTeam(player) == false) {
+			DGroup group = new DGroup(dungeonsXL, player.getName() + "Dun", player, dungeon);
+			DGameWorld gameWorld = dungeon.getMap().instantiateAsGameWorld(false);
+			new Game(dungeonsXL, group, gameWorld);
+			for (Player groupPlayer : group.getPlayers().getOnlinePlayers()) {
+				new DGamePlayer(dungeonsXL, groupPlayer, group.getGameWorld());
+			}
+			return true;
+		}
+		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
+			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
+			return false;
+		}
+		Team team = BaiTeam.getTeamManager().getTeam(player, true);
+		List<Player> members = new ArrayList<Player>(team.getMembers());
+		members.remove(player);
+		for (Player player2 : members) {
+			if (ifPlayerTeleport(player, player2)) {
+				return false;
+			}
+		}
+		DGroup group = new DGroup(dungeonsXL, team.getTeamName(), player, members, dungeon);
+		DGameWorld gameWorld = dungeon.getMap().instantiateAsGameWorld(false);
+		new Game(dungeonsXL, group, gameWorld);
+		for (Player groupPlayer : group.getPlayers().getOnlinePlayers()) {
+			new DGamePlayer(dungeonsXL, groupPlayer, group.getGameWorld());
+		}
+		return true;
 	}
 
 	public static boolean teleport(Player sender, String[] args) {
@@ -109,148 +141,31 @@ public class BTCommand {
 		Team team = BaiTeam.getTeamManager().getTeam(player, false);
 		Set<Player> players = team.getMembers();
 		for (Player player2 : players) {
-			DGlobalPlayer dPlayer = DungeonsXL.getInstance().getDPlayerCache().getByPlayer(player2);
-			Game game = Game.getByPlayer(player);
-			if (game != null && game.isTutorial()) {
-				return false;
-			}
-			DGroup dGroup = DGroup.getByPlayer(player);
-			if (dGroup == null && !(dPlayer instanceof DEditPlayer)) {
-				return false;
-			}
-			if (dPlayer instanceof DGamePlayer) {
-				DGamePlayerEscapeEvent dPlayerEscapeEvent = new DGamePlayerEscapeEvent((DGamePlayer) dPlayer);
-				Bukkit.getPluginManager().callEvent(dPlayerEscapeEvent);
-				if (dPlayerEscapeEvent.isCancelled()) {
-					return false;
-				}
-			}
-			final DPlayerLeaveDGroupEvent dPlayerLeaveDGroupEvent = new DPlayerLeaveDGroupEvent(dPlayer, dGroup);
-			Bukkit.getPluginManager().callEvent(dPlayerLeaveDGroupEvent);
-			if (dPlayerLeaveDGroupEvent.isCancelled()) {
-				return false;
-			}
-			if (dPlayer instanceof DInstancePlayer) {
-				((DInstancePlayer) dPlayer).leave();
-			} else {
-				dGroup.removePlayer(player);
-			}
+			new LeaveCommand(DungeonsXL.getInstance()).onExecute(args, player2);
 		}
 		return true;
 	}
 
 	public static boolean openGui(Player sender, String[] args) {
-		if (args.length <= 1) {
+		if (args.length < 2) {
 			if (BaiTeam.getTeamManager().ifOnTeam(sender) == false) {
-				TeamGui.getGui().openMainGui(sender);
+				TeamGui.openGui(sender, "Main", 0);
 			} else {
-				TeamGui.getGui().openTeamInfoGui(sender, BaiTeam.getTeamManager().getTeam(sender, false));
+				TeamGui.openGui(sender, "Teaminfo", 0);
 			}
 			return true;
-		}
-		switch (args[1].toLowerCase()) {
-		case "main": {
-			TeamGui.getGui().openMainGui(sender);
-			return true;
-		}
-		case "teaminfo": {
-			if (BaiTeam.getTeamManager().ifOnTeam(sender) == false) {
-				return false;
-			}
-			TeamGui.getGui().openTeamInfoGui(sender, BaiTeam.getTeamManager().getTeam(sender, false));
-			return true;
-		}
-		case "teamlist": {
-			if (BaiTeam.getTeamManager().ifOnTeam(sender)) {
-				return false;
-			}
-			if (BaiTeam.getTeamManager().getTeams().isEmpty()) {
-				TeamGui.getGui().openMainGui(sender);
-				return false;
-			}
-			int i1 = 0;
-			if (args.length >= 4 && Integer.valueOf(args[3]) != null) {
-				i1 = Integer.valueOf(args[3]);
-			}
-			List<Team> teams = new ArrayList<Team>();
-			for (Team team : BaiTeam.getTeamManager().getTeams()) {
-				if (team.getMembers().size() < BTConfig.getConfig().getConfig().getInt("TeamSize", 5)) {
-					teams.add(team);
+		} else {
+			int i = 0;
+			if (args.length > 2) {
+				try {
+					i = Integer.valueOf(args[2]);
+				} catch (NumberFormatException e) {
+					System.out.println(args[2] + "不是整数");
 				}
 			}
-			if (teams.isEmpty()) {
-				TeamGui.getGui().openMainGui(sender);
-				return false;
-			}
-			TeamGui.getGui().openTeamListGui(sender, teams, i1);
+			TeamGui.openGui(sender, args[1], i);
 			return true;
 		}
-		case "playerlist": {
-			if (BaiTeam.getTeamManager().ifOnTeam(sender) == false) {
-				return false;
-			}
-			Team team = BaiTeam.getTeamManager().getTeam(sender, true);
-			if (team == null) {
-				return false;
-			}
-			int i1 = 0;
-			if (args.length >= 4 && Integer.valueOf(args[3]) != null) {
-				i1 = Integer.valueOf(args[3]);
-			}
-			List<OfflinePlayer> players = Arrays.asList(Bukkit.getOfflinePlayers());
-			List<Player> players2 = new ArrayList<Player>();
-			for (OfflinePlayer offlinePlayer : players) {
-				if (offlinePlayer.isOnline() && BaiTeam.getTeamManager().ifOnTeam((Player) offlinePlayer) == false) {
-					players2.add((Player) offlinePlayer);
-				}
-			}
-			if (players2.isEmpty()) {
-				TeamGui.getGui().openTeamInfoGui(sender, team);
-				return false;
-			}
-			TeamGui.getGui().openPlayerListGui(sender, players2, i1);
-			return true;
-		}
-		}
-		return false;
-
-	}
-
-	public static boolean play(Player player, String[] args) {
-		DungeonsXL dungeonsXL = DungeonsXL.getInstance();
-		if (args.length <= 2) {
-			return false;
-		}
-		if (dungeonsXL.getDWorldCache().getResourceByName(args[2]) == null || dungeonsXL.getDPlayerCache().getByPlayer(player) instanceof DInstancePlayer) {
-			return false;
-		}
-		DResourceWorld resource = dungeonsXL.getDWorldCache().getResourceByName(args[2]);
-		Dungeon dungeon = new Dungeon(dungeonsXL, resource);
-
-		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
-			DGroup group = new DGroup(dungeonsXL, player.getName() + "Dun", player, dungeon);
-			DGameWorld gameWorld = dungeon.getMap().instantiateAsGameWorld(false);
-			new Game(dungeonsXL, group, gameWorld);
-			for (Player groupPlayer : group.getPlayers().getOnlinePlayers()) {
-				new DGamePlayer(dungeonsXL, groupPlayer, group.getGameWorld());
-			}
-			return true;
-		}
-		Team team = BaiTeam.getTeamManager().getTeam(player, true);
-		List<Player> members = new ArrayList<Player>(team.getMembers());
-		members.remove(player);
-		for (Player player2 : members) {
-			if (ifPlayerTeleport(player, player2)) {
-				return false;
-			}
-		}
-		DGroup group = new DGroup(dungeonsXL, team.getTeamName(), player, members, dungeon);
-		DGameWorld gameWorld = dungeon.getMap().instantiateAsGameWorld(false);
-		new Game(dungeonsXL, group, gameWorld);
-		for (Player groupPlayer : group.getPlayers().getOnlinePlayers()) {
-			new DGamePlayer(dungeonsXL, groupPlayer, group.getGameWorld());
-		}
-		return true;
 	}
 
 	public static boolean create(Player player, String[] args) {
@@ -264,7 +179,7 @@ public class BTCommand {
 			i1++;
 		}
 		Team team = new Team(player, name);
-		BTCreateTeamEvent.run(team, player);
+		Bukkit.getPluginManager().callEvent(new BTECreateTeamEvent(team, player));
 		return true;
 	}
 
@@ -274,18 +189,34 @@ public class BTCommand {
 			return false;
 		}
 		Team team = BaiTeam.getTeamManager().getTeam(player, false);
-		BTLeaveTeamEvent.run(team, player);
+		Bukkit.getPluginManager().callEvent(new BTELeaveTeamEvent(team, player));
 		return true;
 	}
-	
+
 	public static boolean applyto(Player player, String[] args) {
 		if (args.length <= 1) {
 			return false;
 		}
-		BTPlayerApplyEvent.run(BaiTeam.getTeamManager().getTeam(args[1]), player);
+		Team team = BaiTeam.getTeamManager().getTeam(args[1]);
+		Bukkit.getPluginManager().callEvent(new BTEPlayerApplyEvent(team, player));
 		return true;
 	}
-	
+
+	public static boolean apply(Player player, String[] args) {
+		if (args.length <= 2 || Bukkit.getPlayer(args[2]) == null) {
+			return false;
+		}
+		boolean b = args[1].toLowerCase() == "yes" ? true : false;
+		Player player2 = Bukkit.getPlayer(args[2]);
+		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
+			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
+			return false;
+		}
+		Team team = BaiTeam.getTeamManager().getTeam(player, true);
+		Bukkit.getPluginManager().callEvent(new BTEAcceptPlayerApplyEvent(team, player2, b));
+		return true;
+	}
+
 	public static boolean inviteto(Player player, String[] args) {
 		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
 			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
@@ -294,10 +225,22 @@ public class BTCommand {
 		if (args.length <= 1 || Bukkit.getPlayer(args[1]) == null) {
 			return false;
 		}
-		BTTeamInviteEvent.run(BaiTeam.getTeamManager().getTeam(player, true), Bukkit.getPlayer(args[1]), player);
+		Team team = BaiTeam.getTeamManager().getTeam(player, true);
+		Player player2 = Bukkit.getPlayer(args[1]);
+		Bukkit.getPluginManager().callEvent(new BTETeamInviteEvent(team, player2));
 		return true;
 	}
-	
+
+	public static boolean invite(Player player, String[] args) {
+		if (args.length <= 2 || BaiTeam.getTeamManager().ifTeam(args[2]) == false) {
+			return false;
+		}
+		boolean b = args[1].toLowerCase() == "yes" ? true : false;
+		Team team = BaiTeam.getTeamManager().getTeam(args[2]);
+		Bukkit.getPluginManager().callEvent(new BTEAcceptTeamInviteEvent(team, player, b));
+		return true;
+	}
+
 	public static boolean transfer(Player player, String[] args) {
 		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
 			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
@@ -306,10 +249,12 @@ public class BTCommand {
 		if (args.length <= 1 || Bukkit.getPlayer(args[1]) == null) {
 			return false;
 		}
-		BTTransferTeamEvent.run(BaiTeam.getTeamManager().getTeam(player, true), Bukkit.getPlayer(args[1]));
+		Team team = BaiTeam.getTeamManager().getTeam(player, true);
+		Player player2 = Bukkit.getPlayer(args[1]);
+		Bukkit.getPluginManager().callEvent(new BTETransferTeamEvent(team, player2));
 		return true;
 	}
-	
+
 	public static boolean guitransfer(Player player, String[] args) {
 		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
 			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
@@ -319,12 +264,13 @@ public class BTCommand {
 		if (args.length <= 1 || Bukkit.getPlayer(args[1]) == null) {
 			return false;
 		}
-		BTTransferTeamEvent.run(team, Bukkit.getPlayer(args[1]));
-		TeamGui.getGui().openTeamInfoGui(player, team);
-		TeamGui.getGui().openTeamInfoGui(Bukkit.getPlayer(args[1]), team);
+		Player player2 = Bukkit.getPlayer(args[1]);
+		Bukkit.getPluginManager().callEvent(new BTETransferTeamEvent(team, player2));
+		TeamGui.openGui(player, "Teaminfo", 0);
+		TeamGui.openGui(player2, "Teaminfo", 0);
 		return true;
 	}
-	
+
 	public static boolean kick(Player player, String[] args) {
 		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
 			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
@@ -334,10 +280,11 @@ public class BTCommand {
 		if (args.length <= 1 || Bukkit.getPlayer(args[1]) == null) {
 			return false;
 		}
-		BTKickPlayerEvent.run(team, Bukkit.getPlayer(args[1]));
+		Player player2 = Bukkit.getPlayer(args[1]);
+		Bukkit.getPluginManager().callEvent(new BTEKickPlayerEvent(team, player2));
 		return true;
 	}
-	
+
 	public static boolean guikick(Player player, String[] args) {
 		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
 			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
@@ -347,90 +294,31 @@ public class BTCommand {
 		if (args.length <= 1 || Bukkit.getPlayer(args[1]) == null) {
 			return false;
 		}
-		BTKickPlayerEvent.run(team, Bukkit.getPlayer(args[1]));
-		TeamGui.getGui().openTeamInfoGui(player, team);
+		Player player2 = Bukkit.getPlayer(args[1]);
+		Bukkit.getPluginManager().callEvent(new BTEKickPlayerEvent(team, player2));
+		TeamGui.openGui(player, "Teaminfo", 0);
 		return true;
 	}
-	
-	public static boolean apply(Player player, String[] args) {
-		if (args.length <= 1) {
-			return false;
-		}
-		switch (args[1].toLowerCase()) {
-		case "yes": {
-			if (args.length <= 2 || Bukkit.getPlayer(args[2]) == null) {
-				return false;
-			}
-			Player player2 = Bukkit.getPlayer(args[2]);
-			if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
-				BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
-				return false;
-			}
-			Team team = BaiTeam.getTeamManager().getTeam(player,true);
-			BTAcceptPlayerApplyEvent.run(team, player2, true);
-			return true;
-		}
-		case "no": {
-			if (args.length <= 2 || Bukkit.getPlayer(args[2]) == null) {
-				return false;
-			}
-			Player player2 = Bukkit.getPlayer(args[2]);
-			if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
-				BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
-				return false;
-			}
-			Team team = BaiTeam.getTeamManager().getTeam(player,true);
-			BTAcceptPlayerApplyEvent.run(team, player2, false);
-			return true;
-		}
-		}
-		return false;
-	}
-	
-	public static boolean invite(Player player, String[] args) {
-		if (args.length <= 1) {
-			return false;
-		}
-		switch (args[1].toLowerCase()) {
-		case "yes": {
-			if (args.length <= 2 || BaiTeam.getTeamManager().ifTeam(args[2]) == false) {
-				return false;
-			}
-			Team team = BaiTeam.getTeamManager().getTeam(args[2]);
-			BTAcceptTeamInviteEvent.run(team, player, true);
-			return true;
-		}
-		case "no": {
-			if (args.length <= 2 || BaiTeam.getTeamManager().ifTeam(args[2]) == false) {
-				return false;
-			}
-			Team team = BaiTeam.getTeamManager().getTeam(args[2]);
-			BTAcceptTeamInviteEvent.run(team, player, false);
-			return true;
-		}
-		}
-		return false;
-	}
-	
+
 	public static boolean promotional(Player player, String[] args) {
 		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
 			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
 			return false;
 		}
 		Team team = BaiTeam.getTeamManager().getTeam(args[1]);
-		BTPromotionalTeamEvent.run(team);
+		Bukkit.getPluginManager().callEvent(new BTEPromotionalTeamEvent(team));
 		return true;
 	}
-	
+
 	public static boolean guipromotional(Player player, String[] args) {
 		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
 			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
 			return false;
 		}
 		Team team = BaiTeam.getTeamManager().getTeam(args[1]);
-		BTPromotionalTeamEvent.run(team);
-		TeamGui.getGui().openTeamInfoGui(player, team);
+		Bukkit.getPluginManager().callEvent(new BTEPromotionalTeamEvent(team));
+		TeamGui.openGui(player, "Teaminfo", 0);
 		return true;
 	}
-	
+
 }
