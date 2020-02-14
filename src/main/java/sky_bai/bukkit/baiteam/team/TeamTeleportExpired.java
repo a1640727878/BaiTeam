@@ -7,7 +7,7 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class TeamTeleport {
+public class TeamTeleportExpired {
 	public static Map<String, Location> LocationMap = new HashMap<String, Location>();
 
 	public static Map<Long, String> UuidTime = new HashMap<Long, String>();

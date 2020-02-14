@@ -3,6 +3,7 @@ package sky_bai.bukkit.baiteam.util;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class BTTools {
 	// 获取字符串长度
@@ -48,5 +49,13 @@ public class BTTools {
 			str = addSpace(i) + text + addSpace(i);
 		}
 		return str;
+	}
+	
+	public static String RandomString(List<String> list) {
+		if (list.isEmpty()) {
+			return "null";
+		}
+		Random r = new Random();
+		return list.get(r.nextInt(list.size() - 1));
 	}
 }

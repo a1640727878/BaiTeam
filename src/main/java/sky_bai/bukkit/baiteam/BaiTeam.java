@@ -25,13 +25,13 @@ import sky_bai.bukkit.baiteam.command.BTCommandPlayer;
 import sky_bai.bukkit.baiteam.config.BTConfig;
 import sky_bai.bukkit.baiteam.config.BTDefaultConfig;
 import sky_bai.bukkit.baiteam.config.BTMessageConfig;
-import sky_bai.bukkit.baiteam.config.gui.BTCAction;
-import sky_bai.bukkit.baiteam.config.gui.BTCGui;
-import sky_bai.bukkit.baiteam.config.gui.BTCModule;
+import sky_bai.bukkit.baiteam.config.gui.BTGAction;
+import sky_bai.bukkit.baiteam.config.gui.BTGGui;
+import sky_bai.bukkit.baiteam.config.gui.BTGModule;
 import sky_bai.bukkit.baiteam.listener.BaiTeamListener;
 import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.TeamManager;
-import sky_bai.bukkit.baiteam.team.TeamTeleport;
+import sky_bai.bukkit.baiteam.team.TeamTeleportExpired;
 import sky_bai.bukkit.baiteam.util.BTPlaceholderAPI;
 
 public final class BaiTeam extends JavaPlugin {
@@ -49,9 +49,9 @@ public final class BaiTeam extends JavaPlugin {
 
 		BTConfig.setConfig(new BTDefaultConfig());
 		BTConfig.setMessage(new BTMessageConfig());
-		BTConfig.setGui(new BTCGui());
-		BTConfig.setAction(new BTCAction());
-		BTConfig.setModule(new BTCModule());
+		BTConfig.setGui(new BTGGui());
+		BTConfig.setAction(new BTGAction());
+		BTConfig.setModule(new BTGModule());
 
 		teamManager = new TeamManager();
 
@@ -67,16 +67,16 @@ public final class BaiTeam extends JavaPlugin {
 		}
 
 		Bukkit.getPluginManager().registerEvents(new BaiTeamListener(), this);
-		
+
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				for (Long time : TeamTeleport.UuidTime.keySet()) {
-					if (System.currentTimeMillis() - time >= BTConfig.getConfig().getConfig().getLong("ExpiredTime", 20000)) {
-						String uuid = TeamTeleport.UuidTime.get(time);
-						TeamTeleport.LocationMap.remove(uuid);
-						TeamTeleport.TeleportPlayer.remove(uuid);
-						TeamTeleport.UuidTime.remove(time);
+				for (Long time : TeamTeleportExpired.UuidTime.keySet()) {
+					if (System.currentTimeMillis() - time >= BTConfig.getConfig().getConfig().getLong("Time.Teleport.Expired", 20000)) {
+						String uuid = TeamTeleportExpired.UuidTime.get(time);
+						TeamTeleportExpired.LocationMap.remove(uuid);
+						TeamTeleportExpired.TeleportPlayer.remove(uuid);
+						TeamTeleportExpired.UuidTime.remove(time);
 					}
 				}
 			}

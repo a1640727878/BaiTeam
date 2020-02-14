@@ -1,5 +1,9 @@
 package sky_bai.bukkit.baiteam.config;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class BTConfig {
@@ -54,7 +58,19 @@ public class BTConfig {
 		BTConfig.module = module;
 	}
 
+	public static void reload() {
+		try {
+			config.getConfig().load(config.getConfigFile());
+			message.getConfig().load(message.getConfigFile());
+			gui.getConfig().load(gui.getConfigFile());
+			action.getConfig().load(action.getConfigFile());
+			module.getConfig().load(module.getConfigFile());
+		} catch (IOException | InvalidConfigurationException e) {
+		}
+	}
+	
 	public interface Config {
 		public FileConfiguration getConfig();
+		public File getConfigFile();
 	}
 }

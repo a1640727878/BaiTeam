@@ -25,6 +25,7 @@ import sky_bai.bukkit.baiteam.event.BTETransferTeamEvent;
 import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 import sky_bai.bukkit.baiteam.team.TeamManager;
+import sky_bai.bukkit.baiteam.team.TeamPromotional;
 
 public class BaiTeamListener implements Listener {
 
@@ -229,6 +230,7 @@ public class BaiTeamListener implements Listener {
 		List<String> list = Arrays.asList(team.getTeamName(),leader.getName());
 		BTMessage.Action action_1 = BTMessage.Action.setAction(BTMessage.Button.ApplyTo.getMes(), "/baiteam ApplyTo " + team.getTeamName(), BTMessage.Button.Text_ApplyTo.getMes());
 		BTMessage.broadcast(BTMessage.Team.Promotional, list, action_1);
+		TeamPromotional.PromotionalTime.put(team, System.currentTimeMillis());
 	}
 	
 }

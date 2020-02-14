@@ -11,7 +11,7 @@ import sky_bai.bukkit.baiteam.BaiTeam;
 import sky_bai.bukkit.baiteam.message.BTMessage;
 
 public class BTMessageConfig implements BTConfig.Config {
-	private File configFile = new File(BaiTeam.getInstance().getDataFolder(), "message.yml");
+	public final File configFile = new File(BaiTeam.getInstance().getDataFolder(), "message.yml");
 	private FileConfiguration config = new YamlConfiguration();
 
 	public BTMessageConfig() {
@@ -23,6 +23,11 @@ public class BTMessageConfig implements BTConfig.Config {
 
 	public FileConfiguration getConfig() {
 		return config;
+	}
+
+	@Override
+	public File getConfigFile() {
+		return configFile;
 	}
 
 	public void reset() throws IOException, InvalidConfigurationException {

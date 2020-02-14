@@ -21,6 +21,7 @@ import de.erethon.dungeonsxl.player.DInstancePlayer;
 import de.erethon.dungeonsxl.world.DGameWorld;
 import de.erethon.dungeonsxl.world.DResourceWorld;
 import sky_bai.bukkit.baiteam.BaiTeam;
+import sky_bai.bukkit.baiteam.config.BTConfig;
 import sky_bai.bukkit.baiteam.event.BTEAcceptPlayerApplyEvent;
 import sky_bai.bukkit.baiteam.event.BTEAcceptTeamInviteEvent;
 import sky_bai.bukkit.baiteam.event.BTECreateTeamEvent;
@@ -33,7 +34,9 @@ import sky_bai.bukkit.baiteam.event.BTETransferTeamEvent;
 import sky_bai.bukkit.baiteam.gui.TeamGui;
 import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
-import sky_bai.bukkit.baiteam.team.TeamTeleport;
+import sky_bai.bukkit.baiteam.team.TeamPromotional;
+import sky_bai.bukkit.baiteam.team.TeamTeleportExpired;
+import sky_bai.bukkit.baiteam.util.BTTools;
 
 public class BTCommand {
 	private static boolean ifPlayerTeleport(Player player1, Player player2) {
@@ -45,7 +48,7 @@ public class BTCommand {
 		double z = (player1.getLocation().getZ() > player2.getLocation().getZ()) ? (player1.getLocation().getZ() - player2.getLocation().getZ()) : (player2.getLocation().getZ() - player1.getLocation().getZ());
 		return ((x + y + z) >= 10);
 	}
-
+	
 	public static boolean play(Player player, String[] args) {
 		DungeonsXL dungeonsXL = DungeonsXL.getInstance();
 		if (args.length < 3 || dungeonsXL.getDWorldCache().getResourceByName(args[2]) == null || dungeonsXL.getDPlayerCache().getByPlayer(player) instanceof DInstancePlayer) {
@@ -96,18 +99,18 @@ public class BTCommand {
 			World world = (args.length > 6 && Bukkit.getWorld(args[6]) != null) ? Bukkit.getWorld(args[6]) : player.getWorld();
 			Location location = new Location(world, x, y, z);
 			String uuid = UUID.randomUUID().toString();
-			while (TeamTeleport.LocationMap.containsKey(uuid)) {
+			while (TeamTeleportExpired.LocationMap.containsKey(uuid)) {
 				uuid = UUID.randomUUID().toString();
 			}
 			long time = System.currentTimeMillis();
-			while (TeamTeleport.UuidTime.containsKey(time)) {
+			while (TeamTeleportExpired.UuidTime.containsKey(time)) {
 				time = time + 1;
 			}
-			TeamTeleport.LocationMap.put(uuid, location);
+			TeamTeleportExpired.LocationMap.put(uuid, location);
 			Set<Player> tpPlayers = new HashSet<Player>();
 			tpPlayers.add(player);
-			TeamTeleport.TeleportPlayer.put(uuid, tpPlayers);
-			TeamTeleport.UuidTime.put(time, uuid);
+			TeamTeleportExpired.TeleportPlayer.put(uuid, tpPlayers);
+			TeamTeleportExpired.UuidTime.put(time, uuid);
 			player.teleport(location);
 			if (team != null && team.getLeader() == player) {
 				Set<Player> players = team.getMembers();
@@ -120,16 +123,16 @@ public class BTCommand {
 			}
 		} else if (args[1].equalsIgnoreCase("yes") && args.length > 2) {
 			String uuid = args[2];
-			if (TeamTeleport.LocationMap.containsKey(uuid) == false) {
+			if (TeamTeleportExpired.LocationMap.containsKey(uuid) == false) {
 				sender.sendMessage(BTMessage.Error.OnTeleportIsNo.getMes());
 				return false;
 			}
-			if (TeamTeleport.TeleportPlayer.get(uuid).contains(sender)) {
+			if (TeamTeleportExpired.TeleportPlayer.get(uuid).contains(sender)) {
 				sender.sendMessage(BTMessage.Error.OnTeleportIsNo.getMes());
 				return false;
 			}
-			sender.teleport(TeamTeleport.LocationMap.get(uuid));
-			TeamTeleport.TeleportPlayer.get(uuid).add(sender);
+			sender.teleport(TeamTeleportExpired.LocationMap.get(uuid));
+			TeamTeleportExpired.TeleportPlayer.get(uuid).add(sender);
 		}
 		return true;
 	}
@@ -169,7 +172,14 @@ public class BTCommand {
 	}
 
 	public static boolean create(Player player, String[] args) {
-		String name = player.getName();
+		String name = "";
+		boolean b = BTConfig.getConfig().getConfig().getBoolean("TeamNames.Enable",true);
+		if (b) {
+			List<String> names = BTConfig.getConfig().getConfig().getStringList("TeamNames.List");
+			name = BTTools.RandomString(names);
+		} else {
+			name = player.getName();
+		}
 		if (args.length > 1) {
 			name = args[1];
 		}
@@ -206,7 +216,7 @@ public class BTCommand {
 		if (args.length <= 2 || Bukkit.getPlayer(args[2]) == null) {
 			return false;
 		}
-		boolean b = args[1].toLowerCase() == "yes" ? true : false;
+		boolean b = args[1].toLowerCase().equalsIgnoreCase("yes") ? true : false;
 		Player player2 = Bukkit.getPlayer(args[2]);
 		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
 			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
@@ -235,7 +245,7 @@ public class BTCommand {
 		if (args.length <= 2 || BaiTeam.getTeamManager().ifTeam(args[2]) == false) {
 			return false;
 		}
-		boolean b = args[1].toLowerCase() == "yes" ? true : false;
+		boolean b = args[1].toLowerCase().equalsIgnoreCase("yes") ? true : false;
 		Team team = BaiTeam.getTeamManager().getTeam(args[2]);
 		Bukkit.getPluginManager().callEvent(new BTEAcceptTeamInviteEvent(team, player, b));
 		return true;
@@ -306,6 +316,9 @@ public class BTCommand {
 			return false;
 		}
 		Team team = BaiTeam.getTeamManager().getTeam(args[1]);
+		if (TeamPromotional.PromotionalTime.containsKey(team) && (TeamPromotional.PromotionalTime.get(team) + BTConfig.getConfig().getConfig().getLong("Time.Promotional.CoolDown",20000)) >= System.currentTimeMillis()) {
+			return false;
+		}
 		Bukkit.getPluginManager().callEvent(new BTEPromotionalTeamEvent(team));
 		return true;
 	}
@@ -316,6 +329,9 @@ public class BTCommand {
 			return false;
 		}
 		Team team = BaiTeam.getTeamManager().getTeam(args[1]);
+		if (TeamPromotional.PromotionalTime.containsKey(team) && (TeamPromotional.PromotionalTime.get(team) + BTConfig.getConfig().getConfig().getLong("Time.Promotional.CoolDown",20000)) >= System.currentTimeMillis()) {
+			return false;
+		}
 		Bukkit.getPluginManager().callEvent(new BTEPromotionalTeamEvent(team));
 		TeamGui.openGui(player, "Teaminfo", 0);
 		return true;

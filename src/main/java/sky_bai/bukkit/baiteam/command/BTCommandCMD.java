@@ -6,6 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import sky_bai.bukkit.baiteam.config.BTConfig;
+
 public class BTCommandCMD implements CommandExecutor {
 
 	@Override
@@ -17,15 +19,18 @@ public class BTCommandCMD implements CommandExecutor {
 			Player player = Bukkit.getPlayer(strs[0]);
 			String[] args = new String[strs.length - 1];
 			for (int i = 0; i < args.length; i++) {
-				args[i] = strs[i+1];
+				args[i] = strs[i + 1];
 			}
 			switch (strs[0].toLowerCase()) {
 			case "play":
 				return BTCommand.play(player, args);
 			case "opengui":
 				return BTCommand.openGui(player, args);
-			case "kickdun": 
+			case "kickdun":
 				return BTCommand.kickTeamFoDungeon(player, args);
+			case "relaod":
+				BTConfig.reload();
+				return true;
 			}
 		}
 		return false;

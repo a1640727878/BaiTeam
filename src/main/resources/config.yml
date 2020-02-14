@@ -1,9 +1,0 @@
-MesPrefix: "[BaiTeam] "
-
-ButtonWorld:
- - "world"
- 
-TeamSize: 5
-
-# 过期时间(毫秒)
-ExpiredTime: 20000

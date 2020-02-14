@@ -9,11 +9,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import sky_bai.bukkit.baiteam.config.BTConfig;
 
-public class BTCAction implements BTConfig.Config {
-	private File configFile = new File(BTConfigGui.getGuiConfigPath(), "action.yml");
+public class BTGAction implements BTConfig.Config {
+	public final File configFile = new File(BTConfigGui.getGuiConfigPath(), "action.yml");
 	private FileConfiguration config = new YamlConfiguration();
 
-	public BTCAction() {
+	public BTGAction() {
 		try {
 			reset();
 		} catch (IOException | InvalidConfigurationException e) {
@@ -25,6 +25,11 @@ public class BTCAction implements BTConfig.Config {
 		return config;
 	}
 
+	@Override
+	public File getConfigFile() {
+		return configFile;
+	}
+	
 	public void reset() throws FileNotFoundException, IOException, InvalidConfigurationException {
 		BTConfigGui.getGuiConfigPath().mkdirs();
 		configFile.createNewFile();
@@ -35,7 +40,7 @@ public class BTCAction implements BTConfig.Config {
 		}
 		
 		setConfig("创建队伍", "[创建队伍]", "/baiteam create", "创建你的队伍");
-		setConfig("加入队伍", "[加入队伍]", "/baiteam opengui TeamLis", "寻找可以加入的队伍");
+		setConfig("加入队伍", "[加入队伍]", "/baiteam opengui TeamList", "寻找可以加入的队伍");
 		setConfig("队伍人数", "[%baiteam_team_members_amount%/5]", null, "%baiteam_team_members%");
 		setConfig("邀请玩家true", "[邀请玩家]", "/baiteam OpenGui PlayerList", "点击查看未加入队伍的玩家");
 		setConfig("邀请玩家false", "[§7邀请玩家§r]", null, "只有队长可以邀请玩家");
