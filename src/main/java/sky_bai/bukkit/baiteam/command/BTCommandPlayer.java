@@ -37,8 +37,14 @@ public class BTCommandPlayer implements CommandExecutor {
 			case "applyto": {
 				return BTCommand.applyto(player, args);
 			}
+			case "guiapplyto": {
+				return BTCommand.guiapplyto(player, args);
+			}
 			case "inviteto": {
 				return BTCommand.inviteto(player, args);
+			}
+			case "guiinviteto": {
+				return BTCommand.guiinviteto(player, args);
 			}
 			case "transfer": {
 				return BTCommand.transfer(player, args);

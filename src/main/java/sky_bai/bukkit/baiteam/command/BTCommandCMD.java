@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import sky_bai.bukkit.baiteam.config.BTConfig;
+import sky_bai.bukkit.baiteam.message.BTMessage;
 
 public class BTCommandCMD implements CommandExecutor {
 
@@ -30,6 +31,7 @@ public class BTCommandCMD implements CommandExecutor {
 				return BTCommand.kickTeamFoDungeon(player, args);
 			case "relaod":
 				BTConfig.reload();
+				BTMessage.setMesPrefix(BTConfig.getConfig().getConfig().getString("MesPrefix", "[BaiTeam] "));
 				return true;
 			}
 		}

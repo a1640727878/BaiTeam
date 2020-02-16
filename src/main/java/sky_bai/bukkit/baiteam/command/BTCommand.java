@@ -51,10 +51,10 @@ public class BTCommand {
 	
 	public static boolean play(Player player, String[] args) {
 		DungeonsXL dungeonsXL = DungeonsXL.getInstance();
-		if (args.length < 3 || dungeonsXL.getDWorldCache().getResourceByName(args[2]) == null || dungeonsXL.getDPlayerCache().getByPlayer(player) instanceof DInstancePlayer) {
+		if (args.length < 2 || dungeonsXL.getDWorldCache().getResourceByName(args[1]) == null || dungeonsXL.getDPlayerCache().getByPlayer(player) instanceof DInstancePlayer) {
 			return false;
 		}
-		DResourceWorld resource = dungeonsXL.getDWorldCache().getResourceByName(args[2]);
+		DResourceWorld resource = dungeonsXL.getDWorldCache().getResourceByName(args[1]);
 		Dungeon dungeon = new Dungeon(dungeonsXL, resource);
 		if (BaiTeam.getTeamManager().ifOnTeam(player) == false) {
 			DGroup group = new DGroup(dungeonsXL, player.getName() + "Dun", player, dungeon);
@@ -212,6 +212,16 @@ public class BTCommand {
 		return true;
 	}
 
+	public static boolean guiapplyto(Player player, String[] args) {
+		if (args.length <= 1) {
+			return false;
+		}
+		Team team = BaiTeam.getTeamManager().getTeam(args[1]);
+		Bukkit.getPluginManager().callEvent(new BTEPlayerApplyEvent(team, player));
+		TeamGui.openGui(player, "TeamList", 0);
+		return true;
+	}
+	
 	public static boolean apply(Player player, String[] args) {
 		if (args.length <= 2 || Bukkit.getPlayer(args[2]) == null) {
 			return false;
@@ -241,6 +251,21 @@ public class BTCommand {
 		return true;
 	}
 
+	public static boolean guiinviteto(Player player, String[] args) {
+		if (BaiTeam.getTeamManager().getTeam(player, true) == null) {
+			BTMessage.send(player, BTMessage.Error.OnPlayerNoLeader, null);
+			return false;
+		}
+		if (args.length <= 1 || Bukkit.getPlayer(args[1]) == null) {
+			return false;
+		}
+		Team team = BaiTeam.getTeamManager().getTeam(player, true);
+		Player player2 = Bukkit.getPlayer(args[1]);
+		Bukkit.getPluginManager().callEvent(new BTETeamInviteEvent(team, player2));
+		TeamGui.openGui(player, "PlayerList", 0);
+		return true;
+	}
+	
 	public static boolean invite(Player player, String[] args) {
 		if (args.length <= 2 || BaiTeam.getTeamManager().ifTeam(args[2]) == false) {
 			return false;

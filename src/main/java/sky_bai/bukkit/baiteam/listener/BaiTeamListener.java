@@ -22,6 +22,7 @@ import sky_bai.bukkit.baiteam.event.BTEPlayerApplyEvent;
 import sky_bai.bukkit.baiteam.event.BTEPromotionalTeamEvent;
 import sky_bai.bukkit.baiteam.event.BTETeamInviteEvent;
 import sky_bai.bukkit.baiteam.event.BTETransferTeamEvent;
+import sky_bai.bukkit.baiteam.gui.TeamGui;
 import sky_bai.bukkit.baiteam.message.BTMessage;
 import sky_bai.bukkit.baiteam.team.Team;
 import sky_bai.bukkit.baiteam.team.TeamManager;
@@ -101,6 +102,7 @@ public class BaiTeamListener implements Listener {
 		}
 		team.addMembers(player);
 		BTMessage.send(player, BTMessage.Team.Join_Member, list);
+		TeamGui.openGui(player, "Teaminfo", 0);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
