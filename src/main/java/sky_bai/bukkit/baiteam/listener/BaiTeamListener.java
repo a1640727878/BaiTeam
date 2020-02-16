@@ -45,6 +45,7 @@ public class BaiTeamListener implements Listener {
 		}
 		tManager.addTeam(team);
 		BTMessage.send(player, BTMessage.Team.Create, Arrays.asList(team.getTeamName(), player.getName()));
+		TeamGui.openGui(player, "Teaminfo", 0);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
