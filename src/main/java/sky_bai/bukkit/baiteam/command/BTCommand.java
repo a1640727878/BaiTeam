@@ -148,14 +148,18 @@ public class BTCommand {
 	}
 
 	public static boolean kickTeamFoDungeon(Player player) {
-		if (BaiTeam.getTeamManager().ifOnTeam(player) == false) {
-			return false;
-		}
 		DungeonsXL dXl = DungeonsXL.getInstance();
-		Team team = BaiTeam.getTeamManager().getTeam(player, false);
-		Set<Player> players = team.getMembers();
-		for (Player player2 : players) {
-			DGlobalPlayer dPlayer = dXl.getDPlayerCache().getByPlayer(player2);
+		if (BaiTeam.getTeamManager().ifOnTeam(player)) {
+			Team team = BaiTeam.getTeamManager().getTeam(player, false);
+			Set<Player> players = team.getMembers();
+			for (Player player2 : players) {
+				DGlobalPlayer dPlayer = dXl.getDPlayerCache().getByPlayer(player2);
+				if (dPlayer instanceof DInstancePlayer) {
+					((DInstancePlayer) dPlayer).leave();
+				}
+			}
+		} else {
+			DGlobalPlayer dPlayer = dXl.getDPlayerCache().getByPlayer(player);
 			if (dPlayer instanceof DInstancePlayer) {
 				((DInstancePlayer) dPlayer).leave();
 			}
