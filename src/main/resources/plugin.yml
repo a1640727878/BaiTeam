@@ -11,5 +11,7 @@ authors:
 
 
 commands: 
-  BaiTeam: 
   BaiTeamCmd: 
+    description: commands
+  BaiTeam: 
+    description: commands

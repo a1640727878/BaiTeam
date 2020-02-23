@@ -12,10 +12,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import de.erethon.dungeonsxl.DungeonsXL;
-import de.erethon.dungeonsxl.command.LeaveCommand;
 import de.erethon.dungeonsxl.dungeon.Dungeon;
 import de.erethon.dungeonsxl.game.Game;
 import de.erethon.dungeonsxl.player.DGamePlayer;
+import de.erethon.dungeonsxl.player.DGlobalPlayer;
 import de.erethon.dungeonsxl.player.DGroup;
 import de.erethon.dungeonsxl.player.DInstancePlayer;
 import de.erethon.dungeonsxl.world.DGameWorld;
@@ -43,15 +43,22 @@ public class BTCommand {
 		if (player1.getWorld() != player2.getWorld()) {
 			return false;
 		}
-		double x = (player1.getLocation().getX() > player2.getLocation().getX()) ? (player1.getLocation().getX() - player2.getLocation().getX()) : (player2.getLocation().getX() - player1.getLocation().getX());
-		double y = (player1.getLocation().getY() > player2.getLocation().getY()) ? (player1.getLocation().getY() - player2.getLocation().getY()) : (player2.getLocation().getY() - player1.getLocation().getY());
-		double z = (player1.getLocation().getZ() > player2.getLocation().getZ()) ? (player1.getLocation().getZ() - player2.getLocation().getZ()) : (player2.getLocation().getZ() - player1.getLocation().getZ());
+		double x = (player1.getLocation().getX() > player2.getLocation().getX())
+				? (player1.getLocation().getX() - player2.getLocation().getX())
+				: (player2.getLocation().getX() - player1.getLocation().getX());
+		double y = (player1.getLocation().getY() > player2.getLocation().getY())
+				? (player1.getLocation().getY() - player2.getLocation().getY())
+				: (player2.getLocation().getY() - player1.getLocation().getY());
+		double z = (player1.getLocation().getZ() > player2.getLocation().getZ())
+				? (player1.getLocation().getZ() - player2.getLocation().getZ())
+				: (player2.getLocation().getZ() - player1.getLocation().getZ());
 		return ((x + y + z) >= 10);
 	}
-	
+
 	public static boolean play(Player player, String[] args) {
 		DungeonsXL dungeonsXL = DungeonsXL.getInstance();
-		if (args.length < 2 || dungeonsXL.getDWorldCache().getResourceByName(args[1]) == null || dungeonsXL.getDPlayerCache().getByPlayer(player) instanceof DInstancePlayer) {
+		if (args.length < 2 || dungeonsXL.getDWorldCache().getResourceByName(args[1]) == null
+				|| dungeonsXL.getDPlayerCache().getByPlayer(player) instanceof DInstancePlayer) {
 			return false;
 		}
 		DResourceWorld resource = dungeonsXL.getDWorldCache().getResourceByName(args[1]);
@@ -96,7 +103,8 @@ public class BTCommand {
 			double x = Double.valueOf(args[3]);
 			double y = Double.valueOf(args[4]);
 			double z = Double.valueOf(args[5]);
-			World world = (args.length > 6 && Bukkit.getWorld(args[6]) != null) ? Bukkit.getWorld(args[6]) : player.getWorld();
+			World world = (args.length > 6 && Bukkit.getWorld(args[6]) != null) ? Bukkit.getWorld(args[6])
+					: player.getWorld();
 			Location location = new Location(world, x, y, z);
 			String uuid = UUID.randomUUID().toString();
 			while (TeamTeleportExpired.LocationMap.containsKey(uuid)) {
@@ -116,8 +124,10 @@ public class BTCommand {
 				Set<Player> players = team.getMembers();
 				for (Player player2 : players) {
 					if (player2 != player && ifPlayerTeleport(player, player2)) {
-						BTMessage.Action action = BTMessage.Action.setAction(BTMessage.Button.Teleport_Yes.getMes(), "/baiteam Teleport Yes " + uuid, BTMessage.Button.Text_Teleport_Yes.getMes());
-						BTMessage.send(player2, BTMessage.Team.Teleport_Member, Arrays.asList(team.getTeamName(), player.getName(), location.toString()), action);
+						BTMessage.Action action = BTMessage.Action.setAction(BTMessage.Button.Teleport_Yes.getMes(),
+								"/baiteam Teleport Yes " + uuid, BTMessage.Button.Text_Teleport_Yes.getMes());
+						BTMessage.send(player2, BTMessage.Team.Teleport_Member,
+								Arrays.asList(team.getTeamName(), player.getName(), location.toString()), action);
 					}
 				}
 			}
@@ -137,14 +147,18 @@ public class BTCommand {
 		return true;
 	}
 
-	public static boolean kickTeamFoDungeon(Player player, String[] args) {
+	public static boolean kickTeamFoDungeon(Player player) {
 		if (BaiTeam.getTeamManager().ifOnTeam(player) == false) {
 			return false;
 		}
+		DungeonsXL dXl = DungeonsXL.getInstance();
 		Team team = BaiTeam.getTeamManager().getTeam(player, false);
 		Set<Player> players = team.getMembers();
 		for (Player player2 : players) {
-			new LeaveCommand(DungeonsXL.getInstance()).onExecute(args, player2);
+			DGlobalPlayer dPlayer = dXl.getDPlayerCache().getByPlayer(player2);
+			if (dPlayer instanceof DInstancePlayer) {
+				((DInstancePlayer) dPlayer).leave();
+			}
 		}
 		return true;
 	}
@@ -173,7 +187,7 @@ public class BTCommand {
 
 	public static boolean create(Player player, String[] args) {
 		String name = "";
-		boolean b = BTConfig.getConfig().getConfig().getBoolean("TeamNames.Enable",true);
+		boolean b = BTConfig.getConfig().getConfig().getBoolean("TeamNames.Enable", true);
 		if (b) {
 			List<String> names = BTConfig.getConfig().getConfig().getStringList("TeamNames.List");
 			name = BTTools.RandomString(names);
@@ -221,7 +235,7 @@ public class BTCommand {
 		TeamGui.openGui(player, "TeamList", 0);
 		return true;
 	}
-	
+
 	public static boolean apply(Player player, String[] args) {
 		if (args.length <= 2 || Bukkit.getPlayer(args[2]) == null) {
 			return false;
@@ -265,7 +279,7 @@ public class BTCommand {
 		TeamGui.openGui(player, "PlayerList", 0);
 		return true;
 	}
-	
+
 	public static boolean invite(Player player, String[] args) {
 		if (args.length <= 2 || BaiTeam.getTeamManager().ifTeam(args[2]) == false) {
 			return false;
@@ -341,7 +355,9 @@ public class BTCommand {
 			return false;
 		}
 		Team team = BaiTeam.getTeamManager().getTeam(args[1]);
-		if (TeamPromotional.PromotionalTime.containsKey(team) && (TeamPromotional.PromotionalTime.get(team) + BTConfig.getConfig().getConfig().getLong("Time.Promotional.CoolDown",20000)) >= System.currentTimeMillis()) {
+		if (TeamPromotional.PromotionalTime.containsKey(team) && (TeamPromotional.PromotionalTime.get(team)
+				+ BTConfig.getConfig().getConfig().getLong("Time.Promotional.CoolDown", 20000)) >= System
+						.currentTimeMillis()) {
 			return false;
 		}
 		Bukkit.getPluginManager().callEvent(new BTEPromotionalTeamEvent(team));
@@ -354,7 +370,9 @@ public class BTCommand {
 			return false;
 		}
 		Team team = BaiTeam.getTeamManager().getTeam(args[1]);
-		if (TeamPromotional.PromotionalTime.containsKey(team) && (TeamPromotional.PromotionalTime.get(team) + BTConfig.getConfig().getConfig().getLong("Time.Promotional.CoolDown",20000)) >= System.currentTimeMillis()) {
+		if (TeamPromotional.PromotionalTime.containsKey(team) && (TeamPromotional.PromotionalTime.get(team)
+				+ BTConfig.getConfig().getConfig().getLong("Time.Promotional.CoolDown", 20000)) >= System
+						.currentTimeMillis()) {
 			return false;
 		}
 		Bukkit.getPluginManager().callEvent(new BTEPromotionalTeamEvent(team));
