@@ -52,7 +52,7 @@ public class BTPlaceholderAPI extends PlaceholderExpansion {
 				}
 			}
 			if (identifier.startsWith("players_amount")) {
-				return playersName.size() + "";
+				return String.valueOf(playersName.size());
 			}
 			String str1 = identifier.replace("players", "");
 			if (str1.isEmpty() == false) {
@@ -65,7 +65,7 @@ public class BTPlaceholderAPI extends PlaceholderExpansion {
 		} else if (identifier.startsWith("onteam")) {
 			return team == null ? "false" : "true";
 		} else if (identifier.startsWith("teams_amount")) {
-			return tManager.getTeamNames().size() + "";
+			return String.valueOf(tManager.getTeamNames().size());
 		} else if (identifier.startsWith("teams")) {
 			String str1 = identifier.replace("teams", "");
 			if (str1.isEmpty() == false) {
@@ -90,9 +90,9 @@ public class BTPlaceholderAPI extends PlaceholderExpansion {
 		} else if (identifier.startsWith("team_members_amount")) {
 			String str1 = identifier.replace("team_members_amount", "");
 			if (str1.isEmpty() == false) {
-				return tManager.getTeam(str1.substring(1)).getMembers().size() + "";
+				return String.valueOf(tManager.getTeam(str1.substring(1)).getMembers().size());
 			}
-			return team.getMembers().size() + "";
+			return String.valueOf(team.getMembers().size());
 		} else if (identifier.startsWith("team_members")) {
 			String str1 = identifier.replace("team_members", "");
 			if (str1.isEmpty() == false) {
