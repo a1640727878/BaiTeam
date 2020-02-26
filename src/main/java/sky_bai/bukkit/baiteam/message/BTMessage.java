@@ -121,7 +121,8 @@ public class BTMessage {
 		OnTeamIsFull("Error.OnTeamIsFull", "队伍 &{0} 已满"),
 		OnTeamIsNo("Error.OnTeamNameIsUse", "队伍不存在"),
 		OnPlayerKickMe("Error.OnPlayerKickMe", "你不能把自己从队伍里踢出"),
-		OnTeleportIsNo("Error.OnTeleportIsNo", "传送已被使用或已过期");
+		OnTeleportIsNo("Error.OnTeleportIsNo", "传送已被使用或已过期"),
+		OnPlayNotEnough("Error.OnPlayNotEnough","你需要和所有队员在一起才能进入副本");
 
 		private String key = null;
 		private String mes = null;

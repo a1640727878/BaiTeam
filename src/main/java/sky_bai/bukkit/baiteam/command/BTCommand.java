@@ -81,6 +81,7 @@ public class BTCommand {
 		members.remove(player);
 		for (Player player2 : members) {
 			if (ifPlayerTeleport(player, player2)) {
+				BTMessage.send(player, BTMessage.Error.OnPlayNotEnough, null);
 				return false;
 			}
 		}
