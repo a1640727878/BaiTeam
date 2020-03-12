@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import sky_bai.bukkit.baiteam.BaiTeam;
 import sky_bai.bukkit.baiteam.config.BTConfig;
@@ -234,6 +235,16 @@ public class BaiTeamListener implements Listener {
 		BTMessage.Action action_1 = BTMessage.Action.setAction(BTMessage.Button.ApplyTo.getMes(), "/baiteam ApplyTo " + team.getTeamName(), BTMessage.Button.Text_ApplyTo.getMes());
 		BTMessage.broadcast(BTMessage.Team.Promotional, list, action_1);
 		TeamPromotional.PromotionalTime.put(team, System.currentTimeMillis());
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void PlayerQuit(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		if (BaiTeam.getTeamManager().ifOnTeam(player) == false) {
+			return;
+		}
+		Team team = BaiTeam.getTeamManager().getTeam(player, false);
+		Bukkit.getPluginManager().callEvent(new BTELeaveTeamEvent(team, player));
 	}
 	
 }
