@@ -9,7 +9,6 @@ depend:
 authors: 
 - sky_bai
 
-
 commands: 
   BaiTeamCmd: 
     description: commands
